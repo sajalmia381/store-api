@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 import logger from '../logger';
-import { DB_URL } from "../../config";
+import { DB_URL } from "../config";
 
 // console.log(DB_URL)
 
