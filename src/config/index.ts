@@ -12,5 +12,4 @@ export const {
   REFRESH_KEY
 } = process.env;
 
-
 export const appRoot = path.join(__dirname, '../../');
