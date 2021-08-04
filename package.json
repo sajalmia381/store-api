@@ -25,14 +25,17 @@
     "joi": "^17.4.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.5",
+    "multer": "^1.4.2",
     "pino": "^6.13.0",
-    "pino-pretty": "^5.1.2"
+    "pino-pretty": "^5.1.2",
+    "slugify": "^1.6.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.13",
     "@types/joi": "^17.2.3",
     "@types/jsonwebtoken": "^8.5.4",
+    "@types/multer": "^1.4.7",
     "@types/node": "^16.4.10",
     "@types/pino": "^6.3.11",
     "nodemon": "^2.0.12",
