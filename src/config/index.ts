@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 
@@ -10,3 +11,6 @@ export const {
   SECRET_KEY,
   REFRESH_KEY
 } = process.env;
+
+
+export const appRoot = path.join(__dirname, '../../');
