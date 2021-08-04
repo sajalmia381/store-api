@@ -10,7 +10,7 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
   let data = {
     status: statusCode,
     message: 'Internal server error',
-    ...(DEBUG_MODE === 'true' && { originalError: err.message })
+    ...(DEBUG_MODE === 'true' && { originalError: err.message, errorRef: "error From default" })
   }
   if (err instanceof ValidationError) {
     statusCode = 422;
@@ -20,7 +20,6 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
       ...(DEBUG_MODE === 'true' && { errorRef: 'error from joi' })
     }
   }
-  console.log(err)
   if (err instanceof CustomErrorHandler) {
     statusCode = err.status
     data = {
@@ -29,7 +28,7 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
       ...(DEBUG_MODE === 'true' && { errorRef: 'error from CustomErrorHandler' })
     }
   }
-  res.status(statusCode).send(data);
+  res.status(statusCode).json(data);
 }
 
 export default errorHandler;
