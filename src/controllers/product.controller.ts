@@ -27,11 +27,11 @@ const productController = {
   productList: async (req: Request, res: Response, next: NextFunction) => {
 		console.log("dirname", path.resolve(__dirname))
     try {
-		 	const products = await Product.find()
+		 	const products = await Product.find().populate({path:'createBy', select: "_id name role"}).select('-__v')
 			//  console.log(products)
-			 res.json({data: products, status: 200, message: "Product list"})
+			 res.json({data: products, status: 200, message: "Product list"});
 		} catch (err) {
-			return next(err)
+			return next(err);
 		}
   },
   productCreate: (req: Request, res: Response, next: NextFunction) => {
@@ -71,7 +71,7 @@ const productController = {
 					category,
 					description: description || null,
 					image: filePath || null,
-          createdBy: req.user._id
+          createBy: req.user._id
 				})
 				res.status(201).json({status: 201, data: productDoc._doc })
 			} catch (err) {
@@ -79,6 +79,21 @@ const productController = {
 			}
 		})
   },
+	productDescription: async (req: Request, res: Response, next: NextFunction) => {
+		const slug = req.params.slug;
+		try {
+			const product = await Product
+				.findOne({slug})
+				.populate({path:'createBy', select: "_id name role"})
+				.select('-__v');
+			if(!product) {
+				return res.sendStatus(404)
+			}
+			res.json({status: 200, data: product})
+		} catch (err) {
+			return res.sendStatus(404)
+		}
+	}
 }
 
 export default productController;
