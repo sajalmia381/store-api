@@ -21,6 +21,9 @@ class CustomErrorHandler extends Error {
   static notAllow(message="Not allow") {
     return new CustomErrorHandler(405, message)
   }
+  static notFound(message="Not Found") {
+    return new CustomErrorHandler(404, message)
+  }
 }
 
 export default CustomErrorHandler;

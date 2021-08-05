@@ -11,10 +11,10 @@ import path from 'path';
 const app = express();
 
 // Static Site Start
-app.engine('.html', require('ejs').__express);
+app.engine('.ejs', require('ejs').__express);
 app.use('/static', express.static(path.join(__dirname, 'static/public')));
 app.set('views', path.join(__dirname, 'static/views'));
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
 // Static Site End
 
 app.use(express.json());
