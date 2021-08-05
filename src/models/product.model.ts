@@ -1,5 +1,6 @@
 import { Schema, Document, model, PopulatedDoc, HookNextFunction } from 'mongoose';
 import slugify from 'slugify';
+import Utils from '../services/Utils';
 
 import { UserDocument } from './user.model';
 
@@ -27,12 +28,16 @@ const ProductSchema = new Schema<ProductDocument>({
 }, { timestamps: true })
 
 ProductSchema.pre('save', async function(next: HookNextFunction) {
-  let product = this as ProductDocument;
-  if (product.isModified("title") || !product.slug) {
-    let slug = slugify(product.title, { lower: true });
-    product.slug = slug
+  let obj = this as ProductDocument;
+  if (!obj.slug || obj.isModified('slug')) {
+    let newSlug = slugify(obj.title)
+    const isExist = await Product.exists({slug: newSlug});
+    if (isExist) {
+      newSlug = newSlug + '-' + Utils.getRandomString();
+    }
+    obj.slug = newSlug;
   }
   return next()
 });
-
-export default model('Product', ProductSchema, 'products')
+const Product = model('Product', ProductSchema, 'products');
+export default Product;
