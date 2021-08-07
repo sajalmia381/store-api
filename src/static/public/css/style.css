@@ -1,0 +1,18 @@
+:<USERNAME> {
+  --primary: #5bc4d6;
+}
+
+/* List */
+.simple-list {
+  max-width: 480px;
+}
+.simple-list a {
+  text-decoration: none;
+  color: var(--primary);
+}
+
+/* End List */
+
+#response_try_pre {
+  display: none;
+}
