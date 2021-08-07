@@ -131,7 +131,7 @@ const userController = {
   destroy: async (req: Request, res: Response, next: NextFunction) => {
    try {
     if(req.isSuperAdmin) {
-      const instance = await User.findByIdAndDelete({_id: req.params.id})
+      const instance = await User.findOneAndDelete({_id: req.params.id})
       if (!instance) {
         return next(CustomErrorHandler.notFound('User is not found!'))
       }
