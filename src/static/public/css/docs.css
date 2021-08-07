@@ -1,0 +1,17 @@
+/* Layout end */
+
+.link__group__heading {
+  font-size: 20px;
+}
+.link__nav a {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(250, 250, 250, 0.7);
+  display: block;
+  padding: 8px 0;
+}
+.link__nav a.active,
+.link__nav a:hover {
+  color: #fff;
+  font-weight: 500;
+}
