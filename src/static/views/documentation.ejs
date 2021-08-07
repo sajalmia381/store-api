@@ -23,6 +23,7 @@
                         <a href="#id_product--2">Get a single products</a>
                         <a href="#id_product--3">Add product</a>
                         <a href="#id_product--4">Update product</a>
+                        <a href="#id_product--5">Delete product</a>
                     </nav>
                 </div>
                 <!-- User Link -->
@@ -33,6 +34,7 @@
                         <a href="#id_user--2">Get a single user</a>
                         <a href="#id_user--3">Add user</a>
                         <a href="#id_user--4">Update user</a>
+                        <a href="#id_user--5">Delete user</a>
                     </nav>
                 </div>
                 <!-- Auth Link -->
@@ -82,35 +84,39 @@
                             <div class="card-body">
                                 <div id="id_product">
                                     <h4 id="id_product--1" class="mt-2">Get all Products</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/products')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
-                                    </pre>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/products')
+    .then(response => response.json())
+    .then(json => console.log(json))</code></pre>
                                     
                                     <h4 id="id_product--2" class="mt-4">Get single product</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/products/slug')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/products/slug')
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                     
-                                    <h4 id="id_product--3" class="mt-4">Get add product</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/products/slug')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <h4 id="id_product--3" class="mt-4">Create product</h4>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/products',
+    {
+        method: 'POST',
+        body: JSON.stringify({
+          title: 'foo',
+          body: 'bar',
+          userId: 1,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                     
                                     <h4 id="id_product--4" class="mt-4">Get update product</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
+                                    <pre class="language-js">
+                                        <code class="language-js">
                 fetch('https://storerestapi.com/api/products/slug')
                 .then(response => response.json())
                 .then(json => console.log(json))
@@ -126,40 +132,59 @@
                             </div>
                             <div class="card-body">
                                 <div id="id_user">
-                                    <h4 id="id_user--1" class="mt-2">Get all users</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/users')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <h4 id="id_user--1" class="mt-2">Get All Users</h4>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/users')
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                     
-                                    <h4 id="id_user--2" class="mt-4">Get single user</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/users/slug')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <h4 id="id_user--2" class="mt-4">Get Single User</h4>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/users/id')
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                     
-                                    <h4 id="id_user--3" class="mt-4">Get add user</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/users/slug')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <h4 id="id_user--3" class="mt-4">Add New User</h4>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/users/id', 
+    {
+        method: 'POST',
+        body: JSON.stringify({
+            title: 'foo',
+            body: 'bar',
+        }),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
+                                    </pre>
+                                
+                                    <h4 id="id_user--4" class="mt-4">Update User</h4>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/users/id',
+    {
+        method: 'PUT',
+        body: JSON.stringify({
+            name: 'Alex Pi',
+            number: 12025550108
+        }),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                     
-                                    <h4 id="id_user--4" class="mt-4">Get update user</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/users/slug')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <h4 id="id_user--5" class="mt-4">Delete User</h4>
+                                    <pre class="language-js">
+<code class="language-js">etch('https://storerestapi.com/api/users/id')
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                 </div>
                             </div>
@@ -173,35 +198,60 @@
                             <div class="card-body">
                                 <div id="id_auth">
                                     <h4 id="id_auth--1" class="mt-2">Login</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/users')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/auth/login',
+    {
+        method: 'POST',
+        body: JSON.stringify({
+            email: 'Example@mail.com',
+            password: 'Simple12345'
+        }),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                     
                                     <h4 id="id_auth--2" class="mt-4">Register</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/users/slug')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/auth/register',
+    {
+        method: 'POST',
+        body: JSON.stringify({
+            name: 'Alex Pi',
+            email: 'Example@mail.com',
+            number: 12025550108,
+            password: 'Simple12345'
+            password_repeat: 'Simple12345'
+        }),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                     
                                     <h4 id="id_auth--3" class="mt-4">Refresh Token</h4>
-                                    <pre class="language-javascript">
-                                        <code class="language-javascript">
-                fetch('https://storerestapi.com/api/users/slug')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/auth/refresh',
+    {
+        method: 'POST',
+        body: JSON.stringify({
+            refresh_token: 'asd0909asf99f.0sd9fs9df09sd0fi4as4sd0909asf99f0sd9f.s9df09sd0fi',
+        }),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <!-- Footer -->
                     <footer class="bg-dark text-white py-4 mt-auto">

@@ -4,13 +4,14 @@ import attachUser from "../middlewares/attachUser";
 
 const router = Router();
 
-router.get('/', attachUser, userController.userList);
+router.get('/', attachUser, userController.list);
 
-router.post('/', attachUser, userController.userCreate);
+router.post('/', attachUser, userController.create);
 
-router.get('/:id', userController.userDescription);
+router.get('/:id', userController.description);
 
-router.put('/:id', attachUser, userController.userUpdate);
+router.put('/:id', attachUser, userController.update);
 
+router.delete('/:id', attachUser, userController.destroy);
 
 export default router;
