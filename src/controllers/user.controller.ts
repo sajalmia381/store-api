@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, json } from 'express';
 import Joi from 'joi';
 import { REFRESH_KEY } from '../config';
 import { User } from '../models';
@@ -6,7 +6,7 @@ import CustomErrorHandler from '../services/CustomErrorHandler';
 import JwtService from '../services/JwtService';
 
 const userController = {
-  userList: async (req: Request, res: Response, next: NextFunction) => {
+  list: async (req: Request, res: Response, next: NextFunction) => {
     let users: any = []
     try {
       if (req?.isSuperAdmin) {
@@ -19,7 +19,7 @@ const userController = {
       return next(CustomErrorHandler.serverError())
     }
   },
-  userCreate: async (req: Request, res: Response, next: NextFunction) => {
+  create: async (req: Request, res: Response, next: NextFunction) => {
     const userSchema = Joi.object({
       name: Joi.string().required(),
       email: Joi.string().email().required(),
@@ -70,7 +70,7 @@ const userController = {
     }
     
   },
-  userDescription: async (req: Request, res: Response, next: NextFunction) => {
+  description: async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
     let user: any = []
     try {
@@ -87,7 +87,7 @@ const userController = {
       return next(CustomErrorHandler.notFound())
     }
   },
-  userUpdate: async (req: Request, res: Response, next: NextFunction) => {
+  update: async (req: Request, res: Response, next: NextFunction) => {
     const userSchema = Joi.object({
       name: Joi.string().required(),
       number: Joi.number()
@@ -128,6 +128,24 @@ const userController = {
       return next(CustomErrorHandler.serverError(err.message))
     }
   },
+  destroy: async (req: Request, res: Response, next: NextFunction) => {
+   try {
+    if(req.isSuperAdmin) {
+      const instance = await User.findByIdAndDelete({_id: req.params.id})
+      if (!instance) {
+        return next(CustomErrorHandler.notFound('User is not found!'))
+      }
+    } else {
+      const instance = await User.find({_id: req.params.id})
+      if (!instance) {
+        return next(CustomErrorHandler.notFound('User is not found!'))
+      }
+    }
+   } catch (err) {
+     return next(CustomErrorHandler.notFound('User is not found!'))
+   }
+    return res.json({status: 202, message: 'Success! User deleted'})
+  }
 }
 
 export default userController;
