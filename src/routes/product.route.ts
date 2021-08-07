@@ -4,9 +4,12 @@ import authorizationHandler from "../middlewares/authorizationHandler";
 
 const router = Router();
 
-router.get('/', productController.productList);
-router.post('/', authorizationHandler, productController.productCreate)
-router.get('/:slug', productController.productDescription)
+router.get('/', productController.list);
 
+router.post('/', authorizationHandler, productController.create);
+
+router.get('/:slug', productController.description);
+
+router.get('/:slug', productController.destroy);
 
 export default router;

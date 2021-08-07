@@ -24,7 +24,7 @@ const handleMultiPartData = multer({
 
 
 const productController = {
-  productList: async (req: Request, res: Response, next: NextFunction) => {
+  list: async (req: Request, res: Response, next: NextFunction) => {
 		console.log("dirname", path.resolve(__dirname))
     try {
 		 	const products = await Product.find().populate({path:'createBy', select: "_id name role"}).select('-__v')
@@ -34,7 +34,7 @@ const productController = {
 			return next(err);
 		}
   },
-  productCreate: (req: Request, res: Response, next: NextFunction) => {
+  create: (req: Request, res: Response, next: NextFunction) => {
     handleMultiPartData(req, res, async (err) => {
 			if (err) {
 				// console.log("handleMultipartData cb,", err)
@@ -79,7 +79,7 @@ const productController = {
 			}
 		})
   },
-	productDescription: async (req: Request, res: Response, next: NextFunction) => {
+	description: async (req: Request, res: Response, next: NextFunction) => {
 		const slug = req.params.slug;
 		try {
 			const product = await Product
@@ -93,7 +93,25 @@ const productController = {
 		} catch (err) {
 			return res.sendStatus(404)
 		}
-	}
+	},
+	destroy: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+		 if(req.isSuperAdmin) {
+			 const instance = await Product.findByIdAndDelete({_id: req.params.slug})
+			 if (!instance) {
+				 return next(CustomErrorHandler.notFound('Product is not found!'))
+			 }
+		 } else {
+			 const instance = await Product.find({_id: req.params.slug})
+			 if (!instance) {
+				 return next(CustomErrorHandler.notFound('Product is not found!'))
+			 }
+		 }
+		} catch (err) {
+			return next(CustomErrorHandler.notFound('Product is not found!'))
+		}
+		 return res.json({status: 202, message: 'Success! Product deleted'})
+	 }
 }
 
 export default productController;
