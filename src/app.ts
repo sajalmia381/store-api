@@ -21,8 +21,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }))
 
 
-app.listen(APP_PORT || 8000, () => {
-  logger.info(`Server listen at http://localhost:${APP_PORT || 8000}`)
+app.listen(APP_PORT, () => {
+  logger.info(`Server listen at http://localhost:${APP_PORT}`)
   
   // Database
   dbConnect();
