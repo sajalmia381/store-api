@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="static/css/prism.css">
     <link href="static/css/style.css" rel="stylesheet">
     <link href="static/css/docs.css" rel="stylesheet">
-    <title>Rest API</title>
+    <title>Store API | Documentation</title>
   </head>
   <body>
     <div class="layout__container">
@@ -45,6 +45,19 @@
                         <a href="#id_auth--2">Register</a>
                         <a href="#id_auth--3">Refresh Token</a>
                     </nav>
+                </div>
+                
+                <!-- User Cart -->
+                <div class="link__group mt-5">
+                    <h3 class="link__group__heading">Cart</h3>
+                    <p>coming soon</p>
+                    <!-- <nav class="link__nav mt-3">
+                        <a href="#id_cart--1">Get all Carts</a>
+                        <a href="#id_cart--2">Get a single cart</a>
+                        <a href="#id_cart--3">Add cart</a>
+                        <a href="#id_cart--4">Update cart</a>
+                        <a href="#id_cart--5">Delete cart</a>
+                    </nav> -->
                 </div>
             </div>
         </aside>
@@ -102,27 +115,52 @@
     {
         method: 'POST',
         body: JSON.stringify({
-          title: 'foo',
-          body: 'bar',
-          userId: 1,
+          title: 'Men Boxer Sneakers For Men  (Black)',
+          price: 799
+          description: 'Lorem Ipsum is simply dummy text of the printing',
+          category: "610edceb4a82e293533d788b"
+          createBy: "61114e63f1ee4b3cdd819654",
         }),
         headers: {
-          'Content-type': 'application/json; charset=UTF-8',
+          'Content-type': 'multipart/form-data',
         },
     })
     .then(response => response.json())
     .then(json => console.log(json))</code>
                                     </pre>
                                     
-                                    <h4 id="id_product--4" class="mt-4">Get update product</h4>
+                                    <h4 id="id_product--4" class="mt-4">Update product</h4>
                                     <pre class="language-js">
-                                        <code class="language-js">
-                fetch('https://storerestapi.com/api/products/slug')
-                .then(response => response.json())
-                .then(json => console.log(json))
-                                            </code>
+<code class="language-js">fetch('https://storerestapi.com/api/products',
+    {
+        method: 'PUT',
+        body: JSON.stringify({
+          title: 'Men Boxer Sneakers For Men  (Black)',
+          price: 799
+          description: 'Lorem Ipsum is simply dummy text of the printing',
+          category: "610edceb4a82e293533d788b"
+          createBy: "61114e63f1ee4b3cdd819654",
+        }),
+        headers: {
+          'Content-type': 'multipart/form-data',
+        },
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
+                                    </pre>
+                                    
+                                    <h4 id="id_product--5" class="mt-4">Delete product</h4>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/products/slug',
+    {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
                                     </pre>
                                 </div>
+                                
+
                             </div>
                         </div>
                         <!-- User -->
@@ -182,7 +220,11 @@
                                     
                                     <h4 id="id_user--5" class="mt-4">Delete User</h4>
                                     <pre class="language-js">
-<code class="language-js">etch('https://storerestapi.com/api/users/id')
+<code class="language-js">fetch('https://storerestapi.com/api/users/id',
+        {
+            method: 'DELETE',
+        }
+    )
     .then(response => response.json())
     .then(json => console.log(json))</code>
                                     </pre>
