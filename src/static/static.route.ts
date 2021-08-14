@@ -4,11 +4,13 @@ import { Request, Response } from "express-serve-static-core";
 const router = Router();
 
 router.get('/', (req: Request, res: Response) => {
-  res.render('index')
+  const path_name: string = res.req.originalUrl
+  res.render('index', { path_name })
 })
 
 router.get('/docs', (req: Request, res: Response) => {
-  res.render('documentation')
+  const path_name: string = res.req.originalUrl
+  res.render('documentation', { path_name })
 })
 
 export default router;

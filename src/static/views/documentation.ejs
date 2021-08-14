@@ -72,11 +72,11 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
-                                <a class="nav-link px-4 py-3 active" aria-current="page" href="/">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                <a class="nav-link px-4 py-3" href="/docs">Docs</a>
-                                </li>
+                                    <a class="nav-link px-4 py-3 <%= path_name === '/' && 'active' %>" aria-current="page" href="/">Home</a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link px-4 py-3 <%= path_name === '/docs' && 'active' %>" href="/docs">Docs</a>
+                                  </li>
                                 <li class="nav-item">
                                 <a class="nav-link px-4 py-3" href="#">Github</a>
                                 </li>
