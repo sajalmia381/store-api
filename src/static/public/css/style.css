@@ -13,6 +13,11 @@ a {
   text-decoration: none;
   transition: all 0.2s ease-in;
 }
+a.btn:focus,
+button.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
 /* List */
 .simple-list {
   max-width: 480px;

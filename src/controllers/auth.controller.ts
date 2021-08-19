@@ -35,7 +35,9 @@ const authController = {
       const payload = {_id: user._id, role: user.role, email: user.email}
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '30d', REFRESH_KEY)
-      await RefreshToken.create({ token: refresh_token });
+      if(req.isSuperAdmin) {
+        await RefreshToken.create({ token: refresh_token });
+      }
       res.json({access_token, refresh_token, user: user })
       res.end();
     } catch (err) {
@@ -77,7 +79,11 @@ const authController = {
       password: formData.password
     }
     try {
-      const user = await User.create(userPayload);
+      let user = new User(userPayload);
+      // const user = await User.create(userPayload);
+      if (req.isSuperAdmin) {
+        user = await user.save(); 
+      }
       const payload = {
         name: user.name,
         email: user.email,
@@ -101,14 +107,13 @@ const authController = {
     
     try {
       const refreshTokenObj = await RefreshToken.findOne({ token: req.body.refresh_token });
-      console.log('refreshTOken', refreshTokenObj)
+      console.log('refreshToken', refreshTokenObj)
       if (!refreshTokenObj) {
         return next(CustomErrorHandler.unAuthorization('Invalid, Token is not found'))
       }
       let userId;
       try {
         const { _id } = JwtService.verify(refreshTokenObj.token, REFRESH_KEY) as JwtPayload;
-        console.log(_id)
         userId = _id
       } catch (err) {
         return next(CustomErrorHandler.unAuthorization('Invalid refresh token'))
@@ -127,8 +132,9 @@ const authController = {
       }
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '30d', REFRESH_KEY)
-      await RefreshToken.create({token: refresh_token})
-      
+      if (req.isSuperAdmin) {
+        await RefreshToken.create({token: refresh_token})
+      }
       res.status(201).json({ access_token, refresh_token, user })
     } catch (err) {
       return next(CustomErrorHandler.serverError())
