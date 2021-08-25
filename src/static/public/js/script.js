@@ -1,18 +1,19 @@
 (function ($) {
   "use strict";
-  	/* smooth Scroll */
-	$('a[href*="#"]:not([href="#').on('click', function () {
-		if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
-			var target = $(this.hash);
-			target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-			if (target.length) {
-				HtmlBody.animate({
-					scrollTop: target.offset().top - 70
-				}, 1000);
-				return false;
-			}
-		}
-	});
+  /* smooth Scroll */
+  // let HtmlBody = $('html, body');
+	// $('a[href*="#"]:not([href="#').on('click', function () {
+	// 	if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
+	// 		var target = $(this.hash);
+	// 		target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+	// 		if (target.length) {
+	// 			HtmlBody.animate({
+	// 				scrollTop: target.offset().top - 70
+	// 			}, 1000);
+	// 			return false;
+	// 		}
+	// 	}
+	// });
   
   // Home try
   var siteBaseUrl = window.location.origin;
