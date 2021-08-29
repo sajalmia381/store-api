@@ -10,7 +10,6 @@ export interface CategoryDocument extends Document {
   // products: PopulatedDoc<ProductDocument & Document>[];
 }
 
-
 const CategorySchema = new Schema<CategoryDocument>({
   name: { type: String, required: true },
   slug: { type: String, required: false, unique: true },
