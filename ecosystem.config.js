@@ -4,7 +4,7 @@ module.exports = {
       script: 'src/app.ts',
       watch: '.',
       interpreter: "./node_modules/.bin/ts-node",
-      interpreter_args: "--require ts-node/register --require tsconfig-paths/register",
+      interpreter_args: "--require tsconfig-paths/register",
       merge_logs: true,
       "env": {
         APP_PORT: 8000,
