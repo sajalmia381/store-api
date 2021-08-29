@@ -35,7 +35,7 @@ const authController = {
       const payload = {_id: user._id, role: user.role, email: user.email}
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '30d', REFRESH_KEY)
-      if(req.isSuperAdmin) {
+      if(req?.isSuperAdmin) {
         await RefreshToken.create({ token: refresh_token });
       }
       res.json({access_token, refresh_token, user: user })
@@ -81,7 +81,7 @@ const authController = {
     try {
       let user = new User(userPayload);
       // const user = await User.create(userPayload);
-      if (req.isSuperAdmin) {
+      if (req?.isSuperAdmin) {
         user = await user.save(); 
       }
       const payload = {
@@ -132,7 +132,7 @@ const authController = {
       }
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '30d', REFRESH_KEY)
-      if (req.isSuperAdmin) {
+      if (req?.isSuperAdmin) {
         await RefreshToken.create({token: refresh_token})
       }
       res.status(201).json({ access_token, refresh_token, user })
