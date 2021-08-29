@@ -23,7 +23,7 @@ const categoryController = {
       parent: req.body.parent
     });
     try {
-      if(req.isSuperAdmin) {
+      if(req?.isSuperAdmin) {
         const category = await obj.save();
         return res.json({data: category, status: 201, message: 'Success! Category created by admin'})
       }
@@ -59,7 +59,7 @@ const categoryController = {
       parent: req.body.parent
     });
     try {
-      if(req.isSuperAdmin) {
+      if(req?.isSuperAdmin) {
         const category = await obj.save();
         return res.json({data: category, status: 201, message: 'Success! Category updated by admin'})
       }
@@ -76,7 +76,7 @@ const categoryController = {
   },
   delete: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if(req.isSuperAdmin) {
+      if(req?.isSuperAdmin) {
         const instance = await Category.findOneAndDelete({slug: req.params.slug})
         if (!instance) {
           return next(CustomErrorHandler.notFound('Category is not found!'))

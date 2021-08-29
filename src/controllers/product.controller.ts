@@ -60,7 +60,7 @@ const productController = {
 				return next(error);
 			}
 			const { title, price, category, description } = req.body;
-			if (!req.isSuperAdmin) {
+			if (!req?.isSuperAdmin) {
 				const product = {
 					_id: '61114e63f1ee4b3cdd819654',
 					title,
@@ -123,7 +123,7 @@ const productController = {
 				return next(error);
 			}
 			const { title, price, category, description } = req.body;
-			if (!req.isSuperAdmin) {
+			if (!req?.isSuperAdmin) {
 				const product = {
 					_id: '61114e63f1ee4b3cdd819654',
 					title,
@@ -181,9 +181,9 @@ const productController = {
 		}
 	},
 	destroy: async (req: Request, res: Response, next: NextFunction) => {
-		console.log(req.isSuperAdmin)
+		console.log(req?.isSuperAdmin)
 		try {
-		 	if(!req.isSuperAdmin) {
+		 	if(!req?.isSuperAdmin) {
 				const instance = await Product.findOne({slug: req.params.slug})
 				if (!instance) {
 					return next(CustomErrorHandler.notFound('Product is not found!'))

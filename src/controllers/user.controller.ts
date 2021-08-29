@@ -54,7 +54,7 @@ const userController = {
     }
     const user = new User(userPayload);
     try {
-      if(req.isSuperAdmin) {
+      if(req?.isSuperAdmin) {
         await user.save();
       }
       const tokenPayload = {
@@ -118,7 +118,7 @@ const userController = {
     }
     let data;
     try {
-      if(req.isSuperAdmin) {
+      if(req?.isSuperAdmin) {
         data = await User.findOneAndUpdate({_id: req.params.id}, userPayload, { new: true });
       } else {
         data = await User.find({_id: req.params.id});
@@ -130,7 +130,7 @@ const userController = {
   },
   destroy: async (req: Request, res: Response, next: NextFunction) => {
    try {
-    if(req.isSuperAdmin) {
+    if(req?.isSuperAdmin) {
       const instance = await User.findOneAndDelete({_id: req.params.id})
       if (!instance) {
         return next(CustomErrorHandler.notFound('User is not found!'))
