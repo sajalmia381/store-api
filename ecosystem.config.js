@@ -3,6 +3,9 @@ module.exports = {
     {
       script: 'src/app.ts',
       watch: '.',
+      interpreter: "./node_modules/.bin/ts-node",
+      interpreter_args: "--require ts-node/register --require tsconfig-paths/register",
+      merge_logs: true,
       "env": {
         APP_PORT: 8000,
         APP_HOST: "localhost",
@@ -12,10 +15,7 @@ module.exports = {
         SECRET_KEY: "!rad9TN`&B{!pg&Y($oTwOhYfEJ4{0sEBYtu]xqa2^8,Iyc^8HP[[XB,J$O)~BL",
         REFRESH_KEY: "hOS1|4NM.P#F^BA]JiIX^B0AS@JY+E20Zphjs2ER[}FMJXq3}1vH~iGrQPqtycv",
       }
-    },
-    {
-      "extends": "../tsconfig.json"
-    } 
+    }
     // {
     //   script: './service-worker/',
     //   watch: ['./service-worker']
