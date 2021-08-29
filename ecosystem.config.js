@@ -6,6 +6,7 @@ module.exports = {
       watch: '.',
       max_memory_restart: "256M",
       exec_mode: "cluster",
+      args: "-r tsconfig-paths/register",
       "env": {
         APP_PORT: 8000,
         APP_HOST: "localhost",
