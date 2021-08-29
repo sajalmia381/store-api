@@ -1,10 +1,11 @@
 module.exports = {
   apps : [
     {
+      name: 'store-api',
       script: 'src/app.ts',
       watch: '.',
-      interpreter: "./node_modules/.bin/ts-node",
-      interpreter_args: "--require tsconfig-paths/register",
+      // interpreter: "./node_modules/.bin/ts-node",
+      // interpreter_args: "--require tsconfig-paths/register",
       merge_logs: true,
       "env": {
         APP_PORT: 8000,
@@ -16,22 +17,5 @@ module.exports = {
         REFRESH_KEY: "ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8",
       }
     }
-    // {
-    //   script: './service-worker/',
-    //   watch: ['./service-worker']
-    // }
   ],
-
-  // deploy : {
-  //   production : {
-  //     user : 'SSH_USERNAME',
-  //     host : 'SSH_HOSTMACHINE',
-  //     ref  : 'origin/master',
-  //     repo : 'GIT_REPOSITORY',
-  //     path : 'DESTINATION_PATH',
-  //     'pre-deploy-local': '',
-  //     'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
-  //     'pre-setup': ''
-  //   }
-  // }
 };
