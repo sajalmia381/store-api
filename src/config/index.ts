@@ -8,6 +8,7 @@ export const {
   APP_HOST,
   DB_URL,
   DEBUG_MODE,
+  NODE_ENV,
   SECRET_KEY,
   REFRESH_KEY
 } = process.env;
