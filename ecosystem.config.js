@@ -12,7 +12,10 @@ module.exports = {
         SECRET_KEY: "ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8",
         REFRESH_KEY: "ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8",
       }
-    }, 
+    },
+    {
+      "extends": "../tsconfig.json"
+    } 
     // {
     //   script: './service-worker/',
     //   watch: ['./service-worker']
