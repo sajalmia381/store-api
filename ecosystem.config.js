@@ -2,7 +2,7 @@ module.exports = {
   apps : [
     {
       name: 'store-api',
-      script: './node_modules/.bin/ts-node -r tsconfig-paths/register ./src/app.ts',
+      script: './src/app.ts',
       watch: '.',
       max_memory_restart: "256M",
       exec_mode: "cluster",
