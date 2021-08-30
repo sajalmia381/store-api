@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --config nodemon.json src/app.ts",
-    "deploy": "pm2 start ecosystem.config.js"
+    "deploy": "pm2 start ecosystem.config.js --node-args='-r tsconfig-paths/register'"
   },
   "repository": {
     "type": "git",
