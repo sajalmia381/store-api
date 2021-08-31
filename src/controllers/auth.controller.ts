@@ -64,7 +64,7 @@ const authController = {
     try {
       const isExists: boolean = await User.exists({email: formData.email});
       if(isExists) {
-        return next(CustomErrorHandler.alreadyExists('Already, This email is taken'))
+        return next(CustomErrorHandler.alreadyExists('User exists! This email is taken'))
       }
     } catch (err) {
       return next(err)
