@@ -173,11 +173,11 @@ const productController = {
 				.populate({path:'createBy', select: "_id name role"})
 				.select('-__v');
 			if(!product) {
-				return res.sendStatus(404)
+				return res.status(404).json({status: 404, message: 'Product is not found!'})
 			}
 			res.json({status: 200, data: product})
 		} catch (err) {
-			return res.sendStatus(404)
+			return res.status(404).json({status: 404, message: 'Product is not found!'})
 		}
 	},
 	destroy: async (req: Request, res: Response, next: NextFunction) => {
