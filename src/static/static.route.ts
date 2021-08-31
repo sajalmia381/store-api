@@ -5,7 +5,6 @@ const router = Router();
 
 router.get('/', (req: Request, res: Response) => {
   const path_name: string = res.req.originalUrl;
-  console.log(req.protocol, req.hostname, req.baseUrl)
   res.render('index', { path_name })
 })
 
