@@ -40,7 +40,10 @@ const categoryController = {
   },
   single: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const category = await Category.findOne({slug: req.params.slug});
+      const category = await Category
+        .findOne({slug: req.params.slug})
+        .populate({ path: 'products', select: '-__v -category'})
+        .select('-__v');
       if(!category) {
         return next(CustomErrorHandler.notFound())
       }

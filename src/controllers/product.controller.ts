@@ -5,7 +5,7 @@ import path from "path";
 import fs from 'fs';
 
 import CustomErrorHandler from "../services/CustomErrorHandler";
-import { Product } from "../models";
+import { Category, Product } from "../models";
 import { appRoot } from "../config";
 import slugify from "slugify";
 
@@ -27,7 +27,11 @@ const handleMultiPartData = multer({
 const productController = {
   list: async (req: Request, res: Response, next: NextFunction) => {
     try {
-		 	const products = await Product.find().populate({ path:'createBy', select: "_id name role" }).select('-__v')
+		 	const products = await Product.find()
+			 	.populate({ path: 'createBy', select: '_id name role'})
+				.populate({ path: 'category', select: '_id name slug'})
+				.select('-__v')
+				.sort({ createdAt: 'desc'})
 			 res.json({data: products, status: 200, message: "Success"});
 		} catch (err) {
 			return next(err);
@@ -60,6 +64,14 @@ const productController = {
 				return next(error);
 			}
 			const { title, price, category, description } = req.body;
+			const instance = new Product({
+				title,
+				price,
+				category,
+				description: description || null,
+				image: filePath || null,
+				createBy: req?.user?._id || '612e48e3345dcc333ac6cb2b'
+			})
 			if (!req?.isSuperAdmin) {
 				const product = {
 					_id: '61114e63f1ee4b3cdd819654',
@@ -78,19 +90,18 @@ const productController = {
 						}
 					})
 				}
-				return res.status(201).json({ data: product, status: 201, message: 'Success! product created'})
+				return res.status(201).json({ data: instance, status: 201, message: 'Success! product created'})
 			}
-			const instance = new Product({
-				title,
-				price,
-				category,
-				description: description || null,
-				image: filePath || null,
-				createBy: req.user._id
-			})
 			try {
-				const product = await instance.save();
-				res.status(201).json({ data: product, status: 201, message: 'Success! product created by admin'})
+				const product = await instance.save( async (err) => {
+					if (err) return next(CustomErrorHandler.serverError(err.message));
+					if (category) {
+						await Category.updateOne({_id: instance.category}, {$push: { products: instance._id}});
+					}
+				});
+				console.log('product', product)
+				console.log('instance', instance)
+				res.status(201).json({ data: instance, status: 201, message: 'Success! product created by admin'})
 			} catch (err) {
 				return next(err)
 			}
@@ -106,8 +117,8 @@ const productController = {
 				filePath = req.file.path;
 			}
 			const productSchema = Joi.object({
-				title: Joi.string().max(300).required(),
-				price: Joi.number().required(),
+				title: Joi.string().max(300),
+				price: Joi.number(),
 				description: Joi.string(),
 				category: Joi.string(),
 			});
@@ -122,46 +133,55 @@ const productController = {
 				}
 				return next(error);
 			}
-			const { title, price, category, description } = req.body;
-			if (!req?.isSuperAdmin) {
-				const product = {
-					_id: '61114e63f1ee4b3cdd819654',
-					title,
-					slug: slugify(title, { lower: true}),
-					price,
-					category: category || null,
-					description: description || null,
-					image: filePath || null,
-					createBy: '6108fa46be4d6c8723fd4233'
-				}
-				if (filePath) {
-					fs.unlink(`${appRoot}/${filePath}`, (err: any) => {
-						if(err) {
-							return next(CustomErrorHandler.serverError(err.message))
-						}
-					})
-				}
-				return res.status(201).json({ data: product, status: 201, message: 'Success! product updated'})
-			}
 			try {
+				const _product = await Product.findOne({slug: req.params.slug})
+				if (!_product) {
+					return res.status(406).json({status: 406, message: 'Product is not found!'})
+				}
+				console.log('founded product', {..._product});
+				console.log('body', {...req.body})
+				if (!req?.isSuperAdmin) {
+					const product = {
+						"_id": _product._id,
+            "title": _product.title,
+            "price": _product.price,
+            "category": _product.category,
+            "description": _product.description,
+            "image": _product.image,
+            "createBy": _product.createBy,
+            "createdAt": _product.createdAt,
+            "updatedAt": _product.updatedAt,
+            "slug": req.body?.title ? slugify(req.body.title, { lower: true }) : _product.slug,
+						...req.body
+					}
+					if (filePath) {
+						fs.unlink(`${appRoot}/${filePath}`, (err: any) => {
+							if(err) {
+								return next(CustomErrorHandler.serverError(err.message))
+							}
+						})
+					}
+					return res.status(201).json({ data: { ...product, ...req.body }, status: 201, message: 'Success! product updated'})
+				}
+				
 				const product = await Product.findOneAndUpdate(
 					{
 						slug: req.params.slug
 					},
 					{
-						title,
-						price,
-						category,
-						description: description,
-						...(req.file && { image: filePath }),
+						$set: {
+							...req.body
+						}
 					},
 					{
-						new: true
+						new: true,
+						useFindAndModify: false
 					}
 				);
 				res.status(201).json({ data: product, status: 201, message: 'Success! product updated by admin'})
 			} catch (err) {
-				return next(err)
+				console.log('catch', err)
+				return next(CustomErrorHandler.serverError(err))
 			}
 		})
 	},
@@ -181,10 +201,9 @@ const productController = {
 		}
 	},
 	destroy: async (req: Request, res: Response, next: NextFunction) => {
-		console.log(req?.isSuperAdmin)
 		try {
 		 	if(!req?.isSuperAdmin) {
-				const instance = await Product.findOne({slug: req.params.slug})
+				const instance = await Product.findOne({ slug: req.params.slug })
 				if (!instance) {
 					return next(CustomErrorHandler.notFound('Product is not found!'))
 				}
@@ -203,6 +222,7 @@ const productController = {
 					
 				});
 			}
+			await Category.updateMany({ '_id': instance.category }, { $pull: { products: instance._id } });
 			return res.json({status: 202, message: 'Success! Product deleted by Admin'});
 		} catch (err) {
 			return next(CustomErrorHandler.serverError())

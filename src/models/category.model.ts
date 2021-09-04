@@ -14,7 +14,7 @@ const CategorySchema = new Schema<CategoryDocument>({
   name: { type: String, required: true },
   slug: { type: String, required: false, unique: true },
   parent: { type: 'ObjectId', ref: 'Category' },
-  // products: [{ type: 'ObjectId', ref: 'Product' }],
+  products: [{ type: 'ObjectId', ref: 'Product' }],
 })
 
 CategorySchema.pre('save', async function(next: HookNextFunction) {
