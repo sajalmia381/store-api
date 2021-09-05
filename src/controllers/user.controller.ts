@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, json } from 'express';
 import Joi from 'joi';
 import { REFRESH_KEY } from '../config';
 import { User } from '../models';
+import { UserDocument } from '../models/user.model';
 import CustomErrorHandler from '../services/CustomErrorHandler';
 import JwtService from '../services/JwtService';
 
@@ -72,7 +73,7 @@ const userController = {
   },
   description: async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
-    let user: any = []
+    let user: any = {}
     try {
       if (req?.isSuperAdmin) {
         user = await User.findOne({'_id': id}).select('-__v');
@@ -90,9 +91,8 @@ const userController = {
   update: async (req: Request, res: Response, next: NextFunction) => {
     const userSchema = Joi.object({
       name: Joi.string().required(),
-      number: Joi.number()
+      number: Joi.number(),
     })
-    
     const formData = req.body;
     const { error } = userSchema.validate(formData);
     if (error) {
@@ -102,9 +102,9 @@ const userController = {
     // Check user exists
     // console.log('Checking user is exists')
     try {
-      const isExists: boolean = await User.exists({email: formData.email});
-      if(isExists) {
-        return next(CustomErrorHandler.alreadyExists('This email is taken'))
+      const isExists: boolean = await User.exists({email: req.params.id});
+      if(!isExists) {
+        return res.status(404).json({status: 404, message: 'User is not found!'})
       }
     } catch (err) {
       return next(err)
@@ -113,17 +113,23 @@ const userController = {
     // Create user
     // console.log('Create user')
     const userPayload = {
-      name: formData.name,
-      number: formData.number
+      ...(formData.name && {name: formData.name}),
+      ...(formData.number && {number: formData.number})
     }
-    let data;
     try {
       if(req?.isSuperAdmin) {
-        data = await User.findOneAndUpdate({_id: req.params.id}, userPayload, { new: true });
-      } else {
-        data = await User.find({_id: req.params.id});
+        const data = await User.findOneAndUpdate({_id: req.params.id}, userPayload, { new: true, useFindAndModify: false });
+        return res.status(201).json({status: 201, message: 'User updated by admin', data })
       }
-      res.status(201).json({status: 201, message: 'Updated', data})
+      const user = await User.findOne({ _id: req.params.id }) as UserDocument;
+      const data = {
+        name: user.name,
+        email: user.email,
+        number: user.number,
+        role: user.role,
+        ...userPayload
+      }
+      return res.status(201).json({status: 201, message: 'Updated', data})
     } catch (err) {
       return next(CustomErrorHandler.serverError(err.message))
     }
