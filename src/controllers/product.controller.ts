@@ -8,6 +8,7 @@ import CustomErrorHandler from "../services/CustomErrorHandler";
 import { Category, Product } from "../models";
 import { appRoot } from "../config";
 import slugify from "slugify";
+import { ProductDocument } from "../models/product.model";
 
 
 const storage = multer.diskStorage({
@@ -134,12 +135,10 @@ const productController = {
 				return next(error);
 			}
 			try {
-				const _product = await Product.findOne({slug: req.params.slug})
+				const _product = await Product.findOne({slug: req.params.slug}) as ProductDocument
 				if (!_product) {
 					return res.status(406).json({status: 406, message: 'Product is not found!'})
 				}
-				console.log('founded product', {..._product});
-				console.log('body', {...req.body})
 				if (!req?.isSuperAdmin) {
 					const product = {
 						"_id": _product._id,
@@ -180,7 +179,6 @@ const productController = {
 				);
 				res.status(201).json({ data: product, status: 201, message: 'Success! product updated by admin'})
 			} catch (err) {
-				console.log('catch', err)
 				return next(CustomErrorHandler.serverError(err))
 			}
 		})
