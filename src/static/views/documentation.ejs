@@ -106,7 +106,7 @@
                                     
                                     <h4 id="id_product--2" class="mt-4">Get single product</h4>
                                     <pre class="language-js">
-<code class="language-js">fetch('https://storerestapi.com/api/products/slug')
+<code class="language-js">fetch('https://storerestapi.com/api/products/mens-casual-shoes-sports-running-sneakers')
     .then(response => response.json())
     .then(json => console.log(json))</code>
                                     </pre>
@@ -179,19 +179,22 @@
                                     
                                     <h4 id="id_user--2" class="mt-4">Get Single User</h4>
                                     <pre class="language-js">
-<code class="language-js">fetch('https://storerestapi.com/api/users/id')
+<code class="language-js">fetch('https://storerestapi.com/api/users/612e4851345dcc333ac6cb24')
     .then(response => response.json())
     .then(json => console.log(json))</code>
                                     </pre>
                                     
                                     <h4 id="id_user--3" class="mt-4">Add New User</h4>
                                     <pre class="language-js">
-<code class="language-js">fetch('https://storerestapi.com/api/users/id', 
+<code class="language-js">fetch('https://storerestapi.com/api/users', 
     {
         method: 'POST',
         body: JSON.stringify({
-            title: 'foo',
-            body: 'bar',
+            name: 'Ron Bin Nawaz',
+            email: 'ron@gmail.com',
+            number: 72342341,
+            password: 'pass12345',
+            password_repeat: 'pass12345'
         }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -203,12 +206,15 @@
                                 
                                     <h4 id="id_user--4" class="mt-4">Update User</h4>
                                     <pre class="language-js">
-<code class="language-js">fetch('https://storerestapi.com/api/users/id',
+<code class="language-js">fetch('https://storerestapi.com/api/users/612e4851345dcc333ac6cb24',
     {
         method: 'PUT',
         body: JSON.stringify({
             name: 'Alex Pi',
-            number: 12025550108
+            email: 'Example@mail.com',
+            number: 12025550108,
+            password: 'Simple12345'
+            password_repeat: 'Simple12345'
         }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -220,7 +226,7 @@
                                     
                                     <h4 id="id_user--5" class="mt-4">Delete User</h4>
                                     <pre class="language-js">
-<code class="language-js">fetch('https://storerestapi.com/api/users/id',
+<code class="language-js">fetch('https://storerestapi.com/api/users/612e4851345dcc333ac6cb24',
         {
             method: 'DELETE',
         }
