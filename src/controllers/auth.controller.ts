@@ -38,7 +38,7 @@ const authController = {
       if(req?.isSuperAdmin) {
         await RefreshToken.create({ token: refresh_token });
       }
-      res.json({access_token, refresh_token, user: user })
+      res.json({access_token, refresh_token, data: user, message: 'Sign in success', status: 200 })
       res.end();
     } catch (err) {
       return next(err)

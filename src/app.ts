@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { APP_PORT } from './config';
 import dbConnect from './db/connect';
 import logger from './logger';
@@ -9,6 +10,11 @@ import routes from './routes';
 import path from 'path';
 
 const app = express();
+
+app.use(cors({
+  origin: '*',
+  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}));
 
 // Static Site Start
 app.engine('.ejs', require('ejs').__express);
