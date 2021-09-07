@@ -15,7 +15,7 @@ const userController = {
       } else {
         users = await User.find({role: 'ROLE_CUSTOMER'}).select('-__v');
       }
-      return res.json({ status: 200, message: 'Success', date: users })
+      return res.json({ status: 200, message: 'Success', data: users })
     } catch (err) {
       return next(CustomErrorHandler.serverError())
     }
