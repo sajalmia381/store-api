@@ -24,7 +24,7 @@ const userController = {
     const userSchema = Joi.object({
       name: Joi.string().required(),
       email: Joi.string().email().required(),
-      number: Joi.number(),
+      number: Joi.string(),
       password: Joi.string().min(6).required(),
       password_repeat: Joi.ref('password')
     })
@@ -66,7 +66,7 @@ const userController = {
       const access_token = JwtService.sign(tokenPayload);
       const refresh_token = JwtService.sign(tokenPayload, '1y', REFRESH_KEY);
       res.status(201).json({status: 201, message: 'User created', access_token, refresh_token})
-    } catch (err) {
+    } catch (err: any) {
       return next(CustomErrorHandler.serverError(err.message))
     }
     
@@ -83,7 +83,7 @@ const userController = {
       if (!user) {
         return next(CustomErrorHandler.notFound())
       }
-      return res.json({ status: 200, message: 'Success', date: user })
+      return res.json({ status: 200, message: 'Success', data: user })
     } catch (err) {
       return next(CustomErrorHandler.notFound())
     }
@@ -130,7 +130,7 @@ const userController = {
         ...userPayload
       }
       return res.status(201).json({status: 201, message: 'Updated', data})
-    } catch (err) {
+    } catch (err: any) {
       return next(CustomErrorHandler.serverError(err.message))
     }
   },

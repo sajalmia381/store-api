@@ -92,7 +92,7 @@ const authController = {
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '1y', REFRESH_KEY);
       res.status(201).json({status: 201, message: 'User created', access_token, refresh_token})
-    } catch (err) {
+    } catch (err: any) {
       return next(CustomErrorHandler.serverError(err.message))
     }
   },
