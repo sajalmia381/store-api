@@ -178,7 +178,7 @@ const productController = {
 					}
 				);
 				res.status(201).json({ data: product, status: 201, message: 'Success! product updated by admin'})
-			} catch (err) {
+			} catch (err: any) {
 				return next(CustomErrorHandler.serverError(err))
 			}
 		})
