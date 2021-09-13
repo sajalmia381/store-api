@@ -6,12 +6,12 @@ const router = Router();
 
 router.get('/categories', categoryController.categories);
 
-router.post('/category', attachUser, categoryController.create);
+router.post('/categories', attachUser, categoryController.create);
 
-router.get('/category/:slug', categoryController.single);
+router.get('/categories/:slug', categoryController.single);
 
-router.put('/category/:slug', attachUser, categoryController.update);
+router.put('/categories/:slug', attachUser, categoryController.update);
 
-router.delete('/category/:slug', attachUser, categoryController.delete);
+router.delete('/categories/:slug', attachUser, categoryController.delete);
 
 export default router;
