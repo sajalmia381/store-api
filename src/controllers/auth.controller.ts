@@ -6,6 +6,13 @@ import { RefreshToken, User } from '../models';
 import CustomErrorHandler from '../services/CustomErrorHandler';
 import JwtService from '../services/JwtService';
 
+interface JWTPayload {
+  _id: string;
+  name: string;
+  email: string,
+  role: string
+}
+
 const authController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
     // Request validation
@@ -32,7 +39,12 @@ const authController = {
       }
       
       // Generate token
-      const payload = {_id: user._id, role: user.role, email: user.email}
+      const payload: JWTPayload = {
+        _id: user._id,
+        name: user.name,
+        role: user.role,
+        email: user.email
+      }
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '30d', REFRESH_KEY)
       if(req?.isSuperAdmin) {
@@ -84,10 +96,11 @@ const authController = {
       if (req?.isSuperAdmin) {
         user = await user.save(); 
       }
-      const payload = {
+      const payload: JWTPayload = {
+        _id: user._id,
         name: user.name,
-        email: user.email,
-        role: user.role
+        role: user.role,
+        email: user.email
       }
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '1y', REFRESH_KEY);
@@ -124,7 +137,7 @@ const authController = {
       if (!user) {
         return next(CustomErrorHandler.unAuthorization('No user found!'))
       }
-      const payload = {
+      const payload: JWTPayload = {
         _id: user._id,
         name: user.name,
         email: user.email,

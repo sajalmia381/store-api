@@ -4,6 +4,7 @@ import authRoutes from './auth.route';
 import userRoutes from './user.routes';
 import productRoutes from './product.route';
 import categoryRoutes from './category.route';
+import imageRoute from './image.route';
 
 export default function (app: Express) {
   app.get('/health-check', (req: Request, res: Response) => res.sendStatus(200));
@@ -14,6 +15,9 @@ export default function (app: Express) {
   app.use('/api/users', userRoutes);
   // Product Routes
   app.use('/api/products', productRoutes)
+  // Image
+  app.use('/api/images', imageRoute)
   // Category
   app.use('/api', categoryRoutes)
+  
 }
