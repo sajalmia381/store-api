@@ -41,5 +41,21 @@ ProductSchema.pre('save', async function(next: HookNextFunction) {
   }
   return next()
 });
+
+ProductSchema.post('remove', function(doc) {
+  console.log('%s has been removed', doc._id);
+  if(doc?.image) {
+    // const imagePath = instance.image;
+			// if (imagePath) {
+			// 	fs.unlink(`${appRoot}/${imagePath}`, (err) => {
+			// 		if (err) {
+			// 				return next(CustomErrorHandler.serverError());
+			// 		}
+					
+			// 	});
+			// }
+  }
+});
+
 const Product = model<ProductDocument>('Product', ProductSchema, 'products');
 export default Product;

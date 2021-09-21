@@ -38,75 +38,52 @@ const productController = {
 			return next(err);
 		}
   },
-  create: (req: Request, res: Response, next: NextFunction) => {
-    handleMultiPartData(req, res, async (err) => {
-			if (err) {
-				return next(CustomErrorHandler.serverError(err.message))
-			}
-			let filePath;
-			if (req.file) {
-				filePath = req.file.path;
-			}
+  create: async (req: Request, res: Response, next: NextFunction) => {
 			const productSchema = Joi.object({
 				title: Joi.string().max(300).required(),
 				price: Joi.number().required(),
-				description: Joi.string(),
+				description: Joi.string().allow(''),
 				category: Joi.string(),
+				image: Joi.string().allow('')
 			});
 			const { error } = productSchema.validate(req.body);
 			if (error) {
-				if (filePath) {
-					fs.unlink(`${appRoot}/${filePath}`, (err: any) => {
-						if(err) {
-							return next(CustomErrorHandler.serverError(err.message))
-						}
-					})
-				}
 				return next(error);
 			}
-			const { title, price, category, description } = req.body;
+			const { title, price, category, description, image } = req.body;
 			const instance = new Product({
 				title,
 				price,
 				category,
 				description: description || null,
-				image: filePath || null,
+				image,
 				createBy: req?.user?._id || '612e48e3345dcc333ac6cb2b'
 			})
 			if (!req?.isSuperAdmin) {
 				const product = {
-					_id: '61114e63f1ee4b3cdd819654',
+					_id: instance._id,
 					title,
 					slug: slugify(title, { lower: true}),
 					price,
 					category,
-					description,
-					image: filePath || null,
-					createBy: '6108fa46be4d6c8723fd4233'
+					description: description || null,
+					image,
+					createBy: req?.user?._id || '6108fa46be4d6c8723fd4233'
 				}
-				if (filePath) {
-					fs.unlink(`${appRoot}/${filePath}`, (err: any) => {
-						if(err) {
-							return next(CustomErrorHandler.serverError(err.message))
-						}
-					})
-				}
-				return res.status(201).json({ data: instance, status: 201, message: 'Success! product created'})
+				return res.status(201).json({ data: product, status: 201, message: 'Success! product created'})
 			}
 			try {
-				const product = await instance.save( async (err) => {
+				await instance.save( async (err, doc) => {
 					if (err) return next(CustomErrorHandler.serverError(err.message));
 					if (category) {
-						await Category.updateOne({_id: instance.category}, {$push: { products: instance._id}});
+						await Category.updateOne({_id: doc.category}, {$push: { products: doc._id}});
 					}
+					res.status(201).json({ data: doc, status: 201, message: 'Success! product created by admin'})
 				});
-				console.log('product', product)
-				console.log('instance', instance)
-				res.status(201).json({ data: instance, status: 201, message: 'Success! product created by admin'})
 			} catch (err) {
 				return next(err)
 			}
-		})
+		// })
   },
 	update: (req: Request, res: Response, next: NextFunction) => {
 		handleMultiPartData(req, res, async (err) => {
@@ -225,8 +202,35 @@ const productController = {
 		} catch (err) {
 			return next(CustomErrorHandler.serverError())
 		}
-		 
-	 }
+	},
+	
+	bulkDestroy: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+		 	if(!req?.isSuperAdmin) {
+				return res.json({status: 202, message: 'Success! Product deleted'})
+		 	}
+			const slugs = req.params.slugs.split(',');
+			console.log('slugs', slugs)
+			const instance = await Product.deleteMany({ slug: { $in: slugs }})
+			console.log('instance', instance)
+			if (!instance) {
+				return next(CustomErrorHandler.notFound('Product is not found!'))
+			}
+			// const imagePath = instance.image;
+			// if (imagePath) {
+			// 	fs.unlink(`${appRoot}/${imagePath}`, (err) => {
+			// 		if (err) {
+			// 				return next(CustomErrorHandler.serverError());
+			// 		}
+					
+			// 	});
+			// }
+			// await Category.updateMany({ '_id': instance.category }, { $pull: { products: instance._id } });
+			return res.json({status: 202, message: 'Success! Product deleted by Admin'});
+		} catch (err) {
+			return next(CustomErrorHandler.serverError())
+		}
+	}
 }
 
 export default productController;

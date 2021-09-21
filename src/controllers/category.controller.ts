@@ -23,6 +23,7 @@ const categoryController = {
       parent: req.body.parent
     });
     try {
+      console.log('slug', obj.slug)
       if(req?.isSuperAdmin) {
         const category = await obj.save();
         return res.json({data: category, status: 201, message: 'Success! Category created by admin'})
