@@ -1,6 +1,7 @@
 import { Schema, Document, model, HookNextFunction, PopulatedDoc } from 'mongoose';
 import fs from 'fs';
 import { appRoot } from '../config';
+import { ProductDocument } from './product.model';
 
 export interface ImageDocument extends Document {
   name?: string;
@@ -17,17 +18,17 @@ const ImageSchema = new Schema<ImageDocument>({
   type: { type: String},
   dimensions: { type: String },
   webUrl: { type: String, required: false, unique: true },
-  usedCount: { type: Number }
+  usedCount: { type: Number },
 })
 
-// not Work
-// ImageSchema.post('remove', function(doc) {
-//   console.log('call signal remove image', doc)
-//   if(doc?.webUrl) {
-//     fs.unlink(`${appRoot}/${doc?.webUrl}`, (err) => {
-//       console.log('file removed')
-//     });
-//   }
-// });
+ImageSchema.post('findOneAndDelete', async function(imageDoc) {
+  if(imageDoc?.webUrl) {
+    fs.unlink(`${appRoot}/${imageDoc?.webUrl}`, (err) => {
+      if(err) {
+        console.log('Remove image error')
+      }
+    });
+  }
+});
 
 export default model<ImageDocument>('Image', ImageSchema, 'images');

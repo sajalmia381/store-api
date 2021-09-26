@@ -6,5 +6,8 @@ declare global{
             user?: User,
             isSuperAdmin?: boolean,
         }
+        interface Response {
+            pagination: any
+        }
     }
 }

@@ -31,9 +31,9 @@ const productController = {
 		 	const products = await Product.find()
 			 	.populate({ path: 'createBy', select: '_id name role'})
 				.populate({ path: 'category', select: '_id name slug'})
-				.select('-__v')
+				.select('-__v -imageSource')
 				.sort({ createdAt: 'desc'})
-			 res.json({data: products, status: 200, message: "Success"});
+			res.json({data: products, status: 200, message: "Success"});
 		} catch (err) {
 			return next(err);
 		}
@@ -44,19 +44,21 @@ const productController = {
 				price: Joi.number().required(),
 				description: Joi.string().allow(''),
 				category: Joi.string(),
-				image: Joi.string().allow('')
+				image: Joi.string().allow(''),
+				imageSource: Joi.string().allow(''),
 			});
 			const { error } = productSchema.validate(req.body);
 			if (error) {
 				return next(error);
 			}
-			const { title, price, category, description, image } = req.body;
+			const { title, price, category, description, image, imageSource } = req.body;
 			const instance = new Product({
 				title,
 				price,
 				category,
 				description: description || null,
-				image,
+				imageSource: imageSource ? imageSource : null,
+				image: !imageSource ? image : null,
 				createBy: req?.user?._id || '612e48e3345dcc333ac6cb2b'
 			})
 			if (!req?.isSuperAdmin) {
@@ -184,20 +186,20 @@ const productController = {
 				}
 				return res.json({status: 202, message: 'Success! Product deleted'})
 		 	}
-			const instance = await Product.findOneAndDelete({slug: req.params.slug})
+			const instance = await Product.findOneAndDelete({ slug: req.params.slug })
 			if (!instance) {
 				return next(CustomErrorHandler.notFound('Product is not found!'))
 			}
-			const imagePath = instance.image;
-			if (imagePath) {
-				fs.unlink(`${appRoot}/${imagePath}`, (err) => {
-					if (err) {
-							return next(CustomErrorHandler.serverError());
-					}
+			// const imagePath = instance.image;
+			// if (imagePath) {
+			// 	fs.unlink(`${appRoot}/${imagePath}`, (err) => {
+			// 		if (err) {
+			// 				return next(CustomErrorHandler.serverError());
+			// 		}
 					
-				});
-			}
-			await Category.updateMany({ '_id': instance.category }, { $pull: { products: instance._id } });
+			// 	});
+			// }
+			await Category.updateOne({ '_id': instance.category }, { $pull: { products: instance._id } });
 			return res.json({status: 202, message: 'Success! Product deleted by Admin'});
 		} catch (err) {
 			return next(CustomErrorHandler.serverError())
