@@ -47,7 +47,7 @@ const imageController = {
 				// dimensions?: string,
 				webUrl: file?.path,
 			})
-			res.json({ data: image, status: 201, message: 'Success! image created' })
+			res.json({ data: image, status: 201, message: 'Success! image created by admin' })
 		} catch (err) {
 			return next(err)
 		}
@@ -59,14 +59,14 @@ const imageController = {
 			if (!instance) {
 				return next(CustomErrorHandler.notFound('Image is not found!'))
 			}
-			const imagePath = instance.webUrl;
-			if (imagePath) {
-				fs.unlink(`${appRoot}/${imagePath}`, (err) => {
-					if (err) {
-						return next(CustomErrorHandler.serverError());
-					}
-				});
-			}
+			// const imagePath = instance.webUrl;
+			// if (imagePath) {
+			// 	fs.unlink(`${appRoot}/${imagePath}`, (err) => {
+			// 		if (err) {
+			// 			return next(CustomErrorHandler.serverError());
+			// 		}
+			// 	});
+			// }
 			return res.json({ status: 202, message: 'Success! Image deleted by Admin' });
 		} catch (err) {
 			return next(CustomErrorHandler.serverError())
