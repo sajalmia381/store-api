@@ -24,20 +24,17 @@ const authController = {
     if (error) {
       return next(error)
     }
-    
     // Start database query
     try {
       const user = await User.findOne({email: req.body.email}).select("-updateAt -__v");
       if (!user) {
         return next(CustomErrorHandler.invalidCredentials());
       }
-      
       // Check password
       const isPasswordMatch = await user.comparePassword(req.body.password);
       if (!isPasswordMatch) {
         return next(CustomErrorHandler.invalidCredentials('Your password is wrong'));
       }
-      
       // Generate token
       const payload: JWTPayload = {
         _id: user._id,
@@ -47,7 +44,7 @@ const authController = {
       }
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '30d', REFRESH_KEY)
-      if(req?.isSuperAdmin) {
+      if(user?.role === "ROLE_SUPER_ADMIN") {
         await RefreshToken.create({ token: refresh_token });
       }
       res.json({access_token, refresh_token, data: user, message: 'Sign in success', status: 200 })

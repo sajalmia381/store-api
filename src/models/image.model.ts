@@ -1,14 +1,15 @@
-import { Schema, Document, model, HookNextFunction, PopulatedDoc } from 'mongoose';
+import { Schema, Document, model, HookNextFunction, PopulatedDoc, ObjectId } from 'mongoose';
 import fs from 'fs';
 import { appRoot } from '../config';
 import { ProductDocument } from './product.model';
+import { Product } from '.';
 
 export interface ImageDocument extends Document {
   name?: string;
   size?: number;
   type?: string;
   dimensions?: string;
-  usedCount: number;
+  product?: {type: 'ObjectId', ref: "Product"};
   webUrl: string;
 }
 
@@ -17,8 +18,8 @@ const ImageSchema = new Schema<ImageDocument>({
   size: { type: Number},
   type: { type: String},
   dimensions: { type: String },
-  webUrl: { type: String, required: false, unique: true },
-  usedCount: { type: Number },
+  product: { type: String, required: false, unique: true },
+  webUrl: { type: String },
 })
 
 ImageSchema.post('findOneAndDelete', async function(imageDoc) {
@@ -28,6 +29,9 @@ ImageSchema.post('findOneAndDelete', async function(imageDoc) {
         console.log('Remove image error')
       }
     });
+  }
+  if(imageDoc.product) {
+    await Product.updateOne({_id: imageDoc.product}, { imageSource: null, image: '' })
   }
 });
 

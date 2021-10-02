@@ -5,7 +5,7 @@ import path from "path";
 import fs from 'fs';
 
 import CustomErrorHandler from "../services/CustomErrorHandler";
-import { Category, Product } from "../models";
+import { Category, Product, Image } from "../models";
 import { appRoot } from "../config";
 import slugify from "slugify";
 import { ProductDocument } from "../models/product.model";
@@ -79,6 +79,9 @@ const productController = {
 					if (err) return next(CustomErrorHandler.serverError(err.message));
 					if (category) {
 						await Category.updateOne({_id: doc.category}, {$push: { products: doc._id}});
+					}
+					if (doc?.imageSource) {
+						await Image.updateOne({_id: doc.imageSource}, { product: doc._id });
 					}
 					res.status(201).json({ data: doc, status: 201, message: 'Success! product created by admin'})
 				});
