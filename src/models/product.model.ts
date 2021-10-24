@@ -46,7 +46,6 @@ ProductSchema.pre('save', async function(next: HookNextFunction) {
   if (obj?.imageSource) {
     let imageItem = await Image.findOne({_id: obj.imageSource })
     if (imageItem) {
-      console.log('image item', imageItem)
       obj.image = imageItem.webUrl
     }
   }
@@ -55,17 +54,6 @@ ProductSchema.pre('save', async function(next: HookNextFunction) {
 
 ProductSchema.post('findOneAndDelete', async function(doc) {
   // console.log('%s has been removed', doc._id);
-  // if (product?.image) {
-    // const imagePath = instance.image;
-			// if (imagePath) {
-			// 	fs.unlink(`${appRoot}/${imagePath}`, (err) => {
-			// 		if (err) {
-			// 				return next(CustomErrorHandler.serverError());
-			// 		}
-					
-			// 	});
-			// }
-  // }
   if (doc?.imageSource) {
     await Image.findOneAndDelete({ _id: doc.imageSource })
   } else if (doc.image) {
