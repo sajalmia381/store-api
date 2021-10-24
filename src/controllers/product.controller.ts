@@ -28,12 +28,41 @@ const handleMultiPartData = multer({
 const productController = {
   list: async (req: Request, res: Response, next: NextFunction) => {
     try {
+			const page: number = Number(req.query?.page) || 1;
+			const limit: number = Number(req.query?.limit);
+			const sortBy = req.query?.sortBy;
+			if (limit) {
+				const startIndex = (page - 1) * limit
+				const endIndex = page * limit
+				const results: any = {
+					sortBy,
+				}
+				const numberOfProducts = await Product.countDocuments().exec()
+				results.totalProducts = numberOfProducts;
+				if (endIndex < numberOfProducts) {
+					results.nextPage = page + 1
+				}
+				if (startIndex > 0) {
+					results.prevPage = page - 1
+				}
+				results.totalPages = (numberOfProducts / limit).toFixed();
+				if (results?.totalPages < page) {
+					return res.status(204).json({ message: 'No more products found!', status: 204})
+				}
+				const products = await Product.find()
+					.limit(Number(limit))
+					.sort({ createdAt: sortBy })
+					.populate({ path: 'createBy', select: '_id name role'})
+					.populate({ path: 'category', select: '_id name slug'})
+					.select('-__v -imageSource')
+				return res.json({ results, data: products, status: 200, message: "Success"});
+			}
 		 	const products = await Product.find()
+			 	.sort({ createdAt: sortBy })
 			 	.populate({ path: 'createBy', select: '_id name role'})
 				.populate({ path: 'category', select: '_id name slug'})
 				.select('-__v -imageSource')
-				.sort({ createdAt: 'desc'})
-			res.json({data: products, status: 200, message: "Success"});
+			return res.json({data: products, status: 200, message: "Success"});
 		} catch (err) {
 			return next(err);
 		}
