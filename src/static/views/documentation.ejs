@@ -23,9 +23,10 @@
                     <nav class="link__nav mt-3">
                         <a href="#id_product--1">Get all products</a>
                         <a href="#id_product--2">Get a single products</a>
-                        <a href="#id_product--3">Add product</a>
-                        <a href="#id_product--4">Update product</a>
-                        <a href="#id_product--5">Delete product</a>
+                        <a href="#id_product--3">Pagination Results</a>
+                        <a href="#id_product--4">Add product</a>
+                        <a href="#id_product--5">Update product</a>
+                        <a href="#id_product--6">Delete product</a>
                     </nav>
                 </div>
                 <!-- User Link -->
@@ -111,7 +112,14 @@
     .then(json => console.log(json))</code>
                                     </pre>
                                     
-                                    <h4 id="id_product--3" class="mt-4">Create product</h4>
+                                    <h4 id="id_product--3" class="mt-4">Pagination results</h4>
+                                    <pre class="language-js">
+<code class="language-js">fetch('https://storerestapi.com/api/products?limit=10&page=1')
+    .then(response => response.json())
+    .then(json => console.log(json))</code>
+                                    </pre>
+                                    
+                                    <h4 id="id_product--4" class="mt-4">Create product</h4>
                                     <pre class="language-js">
 <code class="language-js">fetch('https://storerestapi.com/api/products',
     {
@@ -130,7 +138,7 @@
     .then(json => console.log(json))</code>
                                     </pre>
                                     
-                                    <h4 id="id_product--4" class="mt-4">Update product</h4>
+                                    <h4 id="id_product--5" class="mt-4">Update product</h4>
                                     <pre class="language-js">
 <code class="language-js">fetch('https://storerestapi.com/api/products/mens-casual-shoes-sports-running-sneakers',
     {
@@ -149,7 +157,7 @@
     .then(json => console.log(json))</code>
                                     </pre>
                                     
-                                    <h4 id="id_product--5" class="mt-4">Delete product</h4>
+                                    <h4 id="id_product--6" class="mt-4">Delete product</h4>
                                     <pre class="language-js">
 <code class="language-js">fetch('https://storerestapi.com/api/products/mens-casual-shoes-sports-running-sneakers',
     {
