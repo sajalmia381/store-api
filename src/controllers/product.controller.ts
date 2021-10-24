@@ -80,9 +80,6 @@ const productController = {
 					if (category) {
 						await Category.updateOne({_id: doc.category}, {$push: { products: doc._id}});
 					}
-					if (doc?.imageSource) {
-						await Image.updateOne({_id: doc.imageSource}, { product: doc._id });
-					}
 					res.status(201).json({ data: doc, status: 201, message: 'Success! product created by admin'})
 				});
 			} catch (err) {
