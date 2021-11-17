@@ -114,7 +114,6 @@ const authController = {
     if (error) {
       return next(error)
     }
-    
     try {
       const refreshTokenObj = await RefreshToken.findOne({ token: req.body.refresh_token });
       console.log('refreshToken', refreshTokenObj)
