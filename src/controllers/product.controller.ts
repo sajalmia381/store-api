@@ -28,9 +28,29 @@ const handleMultiPartData = multer({
 const productController = {
   list: async (req: Request, res: Response, next: NextFunction) => {
     try {
+			// -- pagination
 			const page: number = Number(req.query?.page) || 1;
 			const limit: number = Number(req.query?.limit);
+			// -- filter
 			const sortBy = req.query?.sortBy;
+			let query: any = {};
+			if (req.query?.q) {
+				query.$or = [
+					{
+						"title": { $regex: req.query?.q, $options: 'i' }
+					},
+					{
+						"description": { $regex: req.query?.q, $options: 'i' }
+					}
+				]
+			}
+			if (req.query?.categoryId) {
+				query.category = req.query?.categoryId
+			}
+			if (req.query?.userId) {
+				query.createBy = req.query?.userId
+			}
+			// -- end filter
 			if (limit) {
 				const startIndex = (page - 1) * limit
 				const endIndex = page * limit
@@ -49,7 +69,7 @@ const productController = {
 				if (results?.totalPages < page) {
 					return res.status(204).json({ message: 'No more products found!', status: 204})
 				}
-				const products = await Product.find()
+				const products = await Product.find(query)
 					.limit(Number(limit))
 					.sort({ createdAt: sortBy })
 					.populate({ path: 'createBy', select: '_id name role'})
@@ -57,13 +77,14 @@ const productController = {
 					.select('-__v -imageSource')
 				return res.json({ results, data: products, status: 200, message: "Success"});
 			}
-		 	const products = await Product.find()
+		 	const products = await Product.find(query)
 			 	.sort({ createdAt: sortBy })
 			 	.populate({ path: 'createBy', select: '_id name role'})
 				.populate({ path: 'category', select: '_id name slug'})
 				.select('-__v -imageSource')
 			return res.json({data: products, status: 200, message: "Success"});
 		} catch (err) {
+			console.log(err)
 			return next(err);
 		}
   },
