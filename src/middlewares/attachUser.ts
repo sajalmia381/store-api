@@ -12,6 +12,7 @@ const attachUser = (req: Request, res: Response, next: NextFunction) => {
       req.user = user;
       req.isSuperAdmin = user.role === 'ROLE_SUPER_ADMIN'
     } catch (err) {
+      console.log('user attach err: ', err)
       return next()
     }
   }
