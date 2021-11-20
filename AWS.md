@@ -82,21 +82,35 @@ Add the following to the location part of the server block
 ```
 server {
     charset utf-8;
+    listen 80 default_server;
+	listen [::]:80 default_server;
+
+	# SSL configuration
+	#
+	# listen 443 ssl default_server;
+	# listen [::]:443 ssl default_server;
+
     server_name storerestapi.com www.storerestapi.com;
-    # angular app & front-end files
+
+    # Angular app & front-end files
     location / {
-        <USERNAME> /opt/front-end;
+        <USERNAME> /opt/frontend;
         try_files $uri /index.html;
     }
 
-    # node api reverse proxy
-    location / {
-        proxy_pass http://localhost:8000; #whatever port your app runs on
+    # Node api reverse proxy
+    location /api/ {
+        proxy_pass http://localhost:8000; # whatever port your app runs on
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
+    }
+
+    // Check health
+    location /health {
+        return 200 'I am live :)';
     }
 }
 
@@ -142,5 +156,9 @@ sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
 # Only valid for 90 days, test the renewal process with
 certbot renew --dry-run
 ```
+
+#### Alternative
+
+sudo apt install certbot python3-certbot-nginx
 
 Now visit https://yourdomain.com and you should see your Node app
