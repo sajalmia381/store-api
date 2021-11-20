@@ -7,19 +7,21 @@ import categoryRoutes from './category.route';
 import imageRoute from './image.route';
 import cartRoute from './cart.route';
 
+const API_PREFIX = '/api'
+
 export default function (app: Express) {
   app.get('/health-check', (req: Request, res: Response) => res.sendStatus(200));
   
   // Auth routes
-  app.use('/api/auth', authRoutes);
+  app.use(API_PREFIX + '/auth', authRoutes);
   // User routes
-  app.use('/api/users', userRoutes);
+  app.use(API_PREFIX + '/users', userRoutes);
   // Product Routes
-  app.use('/api/products', productRoutes)
+  app.use(API_PREFIX + '/products', productRoutes)
   // Image
-  app.use('/api/images', imageRoute)
+  app.use(API_PREFIX + '/images', imageRoute)
   // Cart
-  app.use('/api/carts', cartRoute)
+  app.use(API_PREFIX + '/carts', cartRoute)
   // Category
-  app.use('/api', categoryRoutes)
+  app.use(API_PREFIX + '', categoryRoutes)
 }
