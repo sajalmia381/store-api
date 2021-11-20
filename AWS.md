@@ -14,7 +14,7 @@ I will be using the root user, but would suggest creating a new user
 ## 3. Install Node/NPM
 
 ```
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 
 sudo apt install nodejs
 
@@ -80,6 +80,8 @@ sudo nano /etc/nginx/sites-available/default
 Add the following to the location part of the server block
 
 ```
+server {
+    charset utf-8;
     server_name storerestapi.com www.storerestapi.com;
     # angular app & front-end files
     location / {
@@ -96,6 +98,8 @@ Add the following to the location part of the server block
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
     }
+}
+
 ```
 
 ```
