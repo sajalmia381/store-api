@@ -19,9 +19,9 @@ app.use(cors({
 // Static Site Start
 app.engine('.ejs', require('ejs').__express);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-// app.use('/static', express.static(path.join(__dirname, 'static/public')));
-// app.set('views', path.join(__dirname, 'static/views'));
-// app.set('view engine', 'ejs');
+app.use('/static', express.static(path.join(__dirname, 'static/public')));
+app.set('views', path.join(__dirname, 'static/views'));
+app.set('view engine', 'ejs');
 // Static Site End
 
 app.use(express.json());
