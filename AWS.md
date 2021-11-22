@@ -55,6 +55,34 @@ pm2 flush (Clear logs)
 
 # To make sure app starts when reboot
 pm2 startup ubuntu
+
+# start app
+pm2 start ecosystem.config.js --node-args="-r tsconfig-paths/register"
+
+# ecosystem.config.js file
+module.exports = {
+  apps : [
+    {
+      name: 'store-api',
+      script: './src/app.ts',
+      watch: '.',
+      max_memory_restart: "256M",
+      exec_mode: "cluster",
+      interpreter: './node_modules/.bin/ts-node',
+      interpreter_args: '--require tsconfig-paths/register --require ts-node/register',
+      // node_args: '--require tsconfig-paths/register',
+      env: {
+        APP_PORT: 8000,
+        APP_HOST: "localhost",
+        DB_URL: "mongodb://localhost:27017/store-api",
+        DEBUG_MODE: false,
+        NODE_ENV: "production",
+        SECRET_KEY: "ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8",
+        REFRESH_KEY: "ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8",
+      }
+    }
+  ],
+};
 ```
 
 ### You should now be able to access your app using your IP and port. Now we want to setup a firewall blocking that port and setup NGINX as a reverse proxy so we can access it directly using port 80 (http)
