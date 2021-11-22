@@ -1,14 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import Joi from "joi";
 import multer from "multer";
 import path from "path";
-import fs from 'fs';
 
 import CustomErrorHandler from "../services/CustomErrorHandler";
 import { Image } from "../models";
-import { appRoot } from "../config";
-import slugify from "slugify";
-import { ProductDocument } from "../models/product.model";
 
 
 const storage = multer.diskStorage({
@@ -19,25 +14,19 @@ const storage = multer.diskStorage({
 	}
 })
 
-const handleMultiPartData = multer({
-	storage,
-	limits: { fileSize: 1000000 * 10 }
-}).single('image') // image is field name
-
-
 const imageController = {
 	list: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const images = await Image.find()
 				.select('-__v')
 				.sort({ createdAt: 'desc' })
-			res.json({ data: images, status: 200, message: "Success" });
+			res.json({ data: images, status: 200, message: "Success! Image list." });
 		} catch (err) {
 			return next(err);
 		}
 	},
 	create: async (req: Request, res: Response, next: NextFunction) => {
-		console.log(req.file)
+		// console.log(req.file)
 		try {
 			const file: any = req.file;
 			const image = await Image.create({

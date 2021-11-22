@@ -2,6 +2,18 @@
 
 > Steps to deploy a Node.js app to DigitalOcean using PM2, NGINX as a reverse proxy and an SSL from LetsEncrypt
 
+## Transfer data local machine to ec2 server
+
+1. sudo mkdir /opt/front-end
+2. sudo chown ubuntu:ubuntu /opt/front-end
+3. Example:
+
+```
+sudo scp -i <path-to-key-file> -r <path-to-local-dist-folder>/* ubuntu@<domain name>:/opt/front-end
+
+sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dist/store-admin/* ubuntu@ec2-13-126-172-117.ap-south-1.compute.amazonaws.com:/opt/frontend
+```
+
 ## 1. Sign up for Digital Ocean
 
 If you use the referal link below, you get $10 free (1 or 2 months)
@@ -57,7 +69,7 @@ pm2 flush (Clear logs)
 pm2 startup ubuntu
 
 # start app
-pm2 start ecosystem.config.js --node-args="-r tsconfig-paths/register"
+pm2 start ecosystem.config.js
 
 # ecosystem.config.js file
 module.exports = {
@@ -69,8 +81,8 @@ module.exports = {
       max_memory_restart: "256M",
       exec_mode: "cluster",
       interpreter: './node_modules/.bin/ts-node',
-      interpreter_args: '--require tsconfig-paths/register --require ts-node/register',
-      // node_args: '--require tsconfig-paths/register',
+      interpreter_args: '--require tsconfig-paths/register',
+      node_args: '--require ts-node/register',
       env: {
         APP_PORT: 8000,
         APP_HOST: "localhost",
