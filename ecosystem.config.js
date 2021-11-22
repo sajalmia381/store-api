@@ -7,7 +7,7 @@ module.exports = {
       max_memory_restart: "256M",
       exec_mode: "cluster",
       interpreter: './node_modules/.bin/ts-node',
-      // interpreter_args: '--require ts-node/register --require tsconfig-paths/register',
+      interpreter_args: '--require ts-node/register',
       // node_args: '--require tsconfig-paths/register',
       env: {
         APP_PORT: 8000,
