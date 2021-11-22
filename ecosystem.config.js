@@ -8,8 +8,8 @@ module.exports = {
       exec_mode: "cluster",
       interpreter: './node_modules/.bin/ts-node',
       interpreter_args: '--require ts-node/register --require tsconfig-paths/register',
-      // node_args: '-r tsconfig-paths/register',
-      "env": {
+      node_args: '--require tsconfig-paths/register',
+      env: {
         APP_PORT: 8000,
         APP_HOST: "localhost",
         DB_URL: "mongodb://localhost:27017/store-api",
