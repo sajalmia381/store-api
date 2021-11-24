@@ -4,7 +4,7 @@ module.exports = {
       name: 'store-api',
       script: './src/app.ts',
       watch: '.',
-      max_memory_restart: "256M",
+      max_memory_restart: "512M",
       exec_mode: "cluster",
       interpreter: './node_modules/.bin/ts-node',
       interpreter_args: '--require tsconfig-paths/register',
