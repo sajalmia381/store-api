@@ -79,8 +79,7 @@ const productController = {
 			}
 		 	const products = await Product.find(query)
 			 	.sort({ createdAt: sortBy })
-			 	.populate({ path: 'createBy', select: '_id name role'})
-				.populate({ path: 'category', select: '_id name slug'})
+			 	.populate([{path:'createBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
 				.select('-__v -imageSource')
 			return res.json({data: products, status: 200, message: "Success"});
 		} catch (err) {
@@ -217,14 +216,14 @@ const productController = {
 		try {
 			const product = await Product
 				.findOne({slug})
-				.populate({path:'createBy', select: "_id name role"})
-				.select('-__v');
+				.populate([{path:'createBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
+				.select('-__v -imageSource');
 			if(!product) {
-				return res.status(404).json({status: 404, message: 'Product is not found!'})
+				return res.status(404).json({ status: 404, message: 'Product is not found!' })
 			}
-			res.json({status: 200, data: product})
+			return res.json({ status: 200, data: product, message: 'Success! Product found'})
 		} catch (err) {
-			return res.status(404).json({status: 404, message: 'Product is not found!'})
+			return next(err);
 		}
 	},
 	destroy: async (req: Request, res: Response, next: NextFunction) => {

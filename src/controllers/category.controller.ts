@@ -7,7 +7,7 @@ import categorySchema from '../validates/category.validate';
 const categoryController = {
   categories: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const _categories = await Category.find();
+      const _categories = await Category.find().select('-__v');
       return res.json({ data: _categories, status: 200, message: "Success" });
     } catch (err) {
       return next(CustomErrorHandler.serverError())
