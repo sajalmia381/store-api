@@ -28,12 +28,12 @@ const authController = {
     try {
       const user = await User.findOne({email: req.body.email}).select("-updateAt -__v");
       if (!user) {
-        return next(CustomErrorHandler.invalidCredentials());
+        return next(CustomErrorHandler.badRequest('User is not found'));
       }
       // Check password
       const isPasswordMatch = await user.comparePassword(req.body.password);
       if (!isPasswordMatch) {
-        return next(CustomErrorHandler.invalidCredentials('Your password is wrong'));
+        return next(CustomErrorHandler.badRequest('Your password is wrong'));
       }
       // Generate token
       const payload: JWTPayload = {
