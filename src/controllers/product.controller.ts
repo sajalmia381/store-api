@@ -32,15 +32,16 @@ const productController = {
 			const page: number = Number(req.query?.page) || 1;
 			const limit: number = Number(req.query?.limit);
 			// -- filter
-			const sortBy = req.query?.sortBy;
+			const sort = req.query?.sort;
 			let query: any = {};
-			if (req.query?.q) {
+			const searchQuery = req.query?.q;
+			if (searchQuery) {
 				query.$or = [
 					{
-						"title": { $regex: req.query?.q, $options: 'i' }
+						"title": { $regex: searchQuery, $options: 'i' }
 					},
 					{
-						"description": { $regex: req.query?.q, $options: 'i' }
+						"description": { $regex: searchQuery, $options: 'i' }
 					}
 				]
 			}
@@ -54,31 +55,34 @@ const productController = {
 			if (limit) {
 				const startIndex = (page - 1) * limit
 				const endIndex = page * limit
-				const results: any = {
-					sortBy,
+				const metadata: any = {
+					sort,
+					...(searchQuery && { q: searchQuery }),
+					currentPage: page,
 				}
 				const numberOfProducts = await Product.countDocuments().exec()
-				results.totalProducts = numberOfProducts;
+				metadata.totalProducts = numberOfProducts;
 				if (endIndex < numberOfProducts) {
-					results.nextPage = page + 1
+					metadata.nextPage = page + 1
 				}
 				if (startIndex > 0) {
-					results.prevPage = page - 1
+					metadata.prevPage = page - 1
 				}
-				results.totalPages = (numberOfProducts / limit).toFixed();
-				if (results?.totalPages < page) {
+				const __totalPage: any = (numberOfProducts / limit)
+				metadata.totalPages = parseInt(__totalPage) + 1;
+				if (metadata?.totalPages < page) {
 					return res.status(204).json({ message: 'No more products found!', status: 204})
 				}
 				const products = await Product.find(query)
 					.limit(Number(limit))
-					.sort({ createdAt: sortBy })
+					.sort({ createdAt: sort })
 					.populate({ path: 'createBy', select: '_id name role'})
 					.populate({ path: 'category', select: '_id name slug'})
 					.select('-__v -imageSource')
-				return res.json({ results, data: products, status: 200, message: "Success"});
+				return res.json({ metadata, data: products, status: 200, message: "Success"});
 			}
 		 	const products = await Product.find(query)
-			 	.sort({ createdAt: sortBy })
+			 	.sort({ createdAt: sort })
 			 	.populate([{path:'createBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
 				.select('-__v -imageSource')
 			return res.json({data: products, status: 200, message: "Success"});
