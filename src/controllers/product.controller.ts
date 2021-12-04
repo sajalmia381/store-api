@@ -49,7 +49,7 @@ const productController = {
 				query.category = req.query?.categoryId
 			}
 			if (req.query?.userId) {
-				query.createBy = req.query?.userId
+				query.createdBy = req.query?.userId
 			}
 			// -- end filter
 			if (limit) {
@@ -76,14 +76,14 @@ const productController = {
 				const products = await Product.find(query)
 					.limit(Number(limit))
 					.sort({ createdAt: sort })
-					.populate({ path: 'createBy', select: '_id name role'})
+					.populate({ path: 'createdBy', select: '_id name role'})
 					.populate({ path: 'category', select: '_id name slug'})
 					.select('-__v -imageSource')
 				return res.json({ metadata, data: products, status: 200, message: "Success"});
 			}
 		 	const products = await Product.find(query)
 			 	.sort({ createdAt: sort })
-			 	.populate([{path:'createBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
+			 	.populate([{path:'createdBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
 				.select('-__v -imageSource')
 			return res.json({data: products, status: 200, message: "Success"});
 		} catch (err) {
@@ -99,12 +99,14 @@ const productController = {
 				category: Joi.string(),
 				image: Joi.string().allow(''),
 				imageSource: Joi.string().allow(''),
+				createdBy!: Joi.string()
 			});
 			const { error } = productSchema.validate(req.body);
 			if (error) {
 				return next(error);
 			}
-			const { title, price, category, description, image, imageSource } = req.body;
+			const { title, price, category, description, image, imageSource, createdBy } = req.body;
+			console.log('createdBy', createdBy)
 			const instance = new Product({
 				title,
 				price,
@@ -112,7 +114,7 @@ const productController = {
 				description: description || null,
 				imageSource: imageSource ? imageSource : null,
 				image: !imageSource ? image : null,
-				createBy: req?.user?._id || '612e48e3345dcc333ac6cb2b'
+				createdBy: createdBy ? createdBy : (req?.user?._id || '612e48e3345dcc333ac6cb2b')
 			})
 			if (!req?.isSuperAdmin) {
 				const product = {
@@ -123,7 +125,7 @@ const productController = {
 					category,
 					description: description || null,
 					image,
-					createBy: req?.user?._id || '6108fa46be4d6c8723fd4233'
+					createdBy: createdBy ? createdBy : (req?.user?._id || '612e48e3345dcc333ac6cb2b')
 				}
 				return res.status(201).json({ data: product, status: 201, message: 'Success! product created'})
 			}
@@ -138,7 +140,6 @@ const productController = {
 			} catch (err) {
 				return next(err)
 			}
-		// })
   },
 	update: (req: Request, res: Response, next: NextFunction) => {
 		handleMultiPartData(req, res, async (err) => {
@@ -179,7 +180,7 @@ const productController = {
             "category": _product.category,
             "description": _product.description,
             "image": _product.image,
-            "createBy": _product.createBy,
+            "createdBy": _product.createdBy,
             "createdAt": _product.createdAt,
             "updatedAt": _product.updatedAt,
             "slug": req.body?.title ? slugify(req.body.title, { lower: true }) : _product.slug,
@@ -220,7 +221,7 @@ const productController = {
 		try {
 			const product = await Product
 				.findOne({slug})
-				.populate([{path:'createBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
+				.populate([{path:'createdBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
 				.select('-__v -imageSource');
 			if(!product) {
 				return res.status(404).json({ status: 404, message: 'Product is not found!' })

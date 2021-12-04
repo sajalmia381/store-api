@@ -9,7 +9,7 @@ import  fs from 'fs';
 import { appRoot } from '../config';
 
 export interface ProductDocument extends Document {
-  createBy: PopulatedDoc<UserDocument & Document>,
+  createdBy: PopulatedDoc<UserDocument & Document>,
   title: string;
   slug: string;
   price: number;
@@ -23,7 +23,7 @@ export interface ProductDocument extends Document {
 
 
 const ProductSchema = new Schema<ProductDocument>({
-  createBy: { type: 'ObjectId', ref: 'User' },
+  createdBy: { type: 'ObjectId', ref: 'User' },
   title: { type: String, required: true },
   slug: { type: String, required: false, unique: true },
   price: { type: Number, required: true },
