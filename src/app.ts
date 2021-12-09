@@ -5,7 +5,6 @@ import dbConnect from './db/connect';
 import logger from './logger';
 import errorHandler from './middlewares/errorHandler';
 
-// import staticRoutes from './static/static.route';
 import routes from './routes';
 import path from 'path';
 
@@ -17,11 +16,7 @@ app.use(cors({
 }));
 
 // Static Site Start
-// app.engine('.ejs', require('ejs').__express);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-// app.use('/static', express.static(path.join(__dirname, 'static/public')));
-// app.set('views', path.join(__dirname, 'static/views'));
-// app.set('view engine', 'ejs');
 // Static Site End
 
 app.use(express.json());
@@ -33,9 +28,6 @@ app.listen(APP_PORT, () => {
   
   // Database
   dbConnect();
-  
-  // Static site route
-  // app.use(staticRoutes)
   
   // Routes
   routes(app);
