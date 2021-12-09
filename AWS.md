@@ -9,10 +9,18 @@
 3. Example:
 
 ```
+sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-13-126-172-117.ap-south-1.compute.amazonaws.com
+
 sudo scp -i <path-to-key-file> -r <path-to-local-dist-folder>/* ubuntu@<domain name>:/opt/front-end
+
+sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dump/* ubuntu@ec2-13-126-172-117.ap-south-1.compute.amazonaws.com:/opt/db-data
 
 sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dist/store-admin/* ubuntu@ec2-13-126-172-117.ap-south-1.compute.amazonaws.com:/opt/frontend
 ```
+
+## 0. Mongoose
+
+mongorestore -d store-api /dump/store-api
 
 ## 1. Sign up for Digital Ocean
 
