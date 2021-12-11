@@ -7,7 +7,7 @@ export interface CategoryDocument extends Document {
   name: string;
   slug: string;
   parent?: PopulatedDoc<'self' & Document>;
-  // products: PopulatedDoc<ProductDocument & Document>[];
+  products?: any; // PopulatedDoc<ProductDocument & Document>[]
 }
 
 const CategorySchema = new Schema<CategoryDocument>({

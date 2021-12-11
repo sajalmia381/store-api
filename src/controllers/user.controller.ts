@@ -119,7 +119,7 @@ const userController = {
     try {
       if(req?.isSuperAdmin) {
         const data = await User.findOneAndUpdate({_id: req.params.id}, userPayload, { new: true, useFindAndModify: false });
-        return res.status(201).json({status: 201, message: 'User updated by admin', data })
+        return res.status(201).json({status: 201, message: 'Success! User updated by admin', data })
       }
       const user = await User.findOne({ _id: req.params.id }) as UserDocument;
       const data = {
@@ -129,9 +129,9 @@ const userController = {
         role: user.role,
         ...userPayload
       }
-      return res.status(201).json({status: 201, message: 'Updated', data})
+      return res.status(201).json({status: 201, message: 'Success! User updated', data})
     } catch (err: any) {
-      return next(CustomErrorHandler.serverError(err.message))
+      return next(CustomErrorHandler.serverError(err?.message))
     }
   },
   destroy: async (req: Request, res: Response, next: NextFunction) => {
@@ -141,16 +141,16 @@ const userController = {
       if (!instance) {
         return next(CustomErrorHandler.notFound('User is not found!'))
       }
-    } else {
-      const instance = await User.find({_id: req.params.id})
-      if (!instance) {
-        return next(CustomErrorHandler.notFound('User is not found!'))
-      }
+      return res.json({status: 202, message: 'Success! User deleted by admin'})
     }
-   } catch (err) {
-     return next(CustomErrorHandler.notFound('User is not found!'))
-   }
+    const instance = await User.find({_id: req.params.id})
+    if (!instance) {
+      return next(CustomErrorHandler.notFound('User is not found!'))
+    }
     return res.json({status: 202, message: 'Success! User deleted'})
+   } catch (err: any) {
+     return next(CustomErrorHandler.serverError(err?.message))
+   }
   }
 }
 
