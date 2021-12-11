@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import slugify from "slugify";
 import { Category } from "../models";
+import { CategoryDocument } from "../models/category.model";
 import CustomErrorHandler from "../services/CustomErrorHandler";
 import categorySchema from '../validates/category.validate';
 
@@ -46,9 +47,9 @@ const categoryController = {
         .populate({ path: 'products', select: '-__v -category'})
         .select('-__v');
       if(!category) {
-        return next(CustomErrorHandler.notFound())
+        return next(CustomErrorHandler.notFound('Category is not found!'))
       }
-      return res.json({ data: category, status: 200, message: "Success" });
+      return res.json({ data: category, status: 200, message: "Success! Category found" });
     } catch (err) {
       return next(CustomErrorHandler.serverError())
     }
@@ -58,20 +59,20 @@ const categoryController = {
     if (error) {
       return next(error)
     }
-    const obj = new Category({
+    const payload = {
       name: req.body.name,
       parent: req.body.parent
-    });
+    };
     try {
       if(req?.isSuperAdmin) {
-        const category = await obj.save();
-        return res.json({data: category, status: 201, message: 'Success! Category updated by admin'})
+        const data = await Category.findOneAndUpdate({_id: req.params.id}, payload, { new: true, useFindAndModify: false });
+        return res.status(201).json({status: 201, message: 'Success! User updated by admin', data })
       }
-      const category = {
-        _id: obj._id,
-        name: obj.name,
-        slug: slugify(obj.name, { lower: true }),
-        parent: obj.parent
+      const category = await Category.findOne({ _id: req.params.id }) as CategoryDocument; 
+      const newCategory = {
+        name: category.name,
+        slug: category.slug,
+        product: category?.products
       }
       return res.json({data: category, status: 201, message: 'Success! Category updated'})
     } catch(err) {

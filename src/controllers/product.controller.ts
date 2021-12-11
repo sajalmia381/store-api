@@ -141,80 +141,60 @@ const productController = {
 				return next(err)
 			}
   },
-	update: (req: Request, res: Response, next: NextFunction) => {
-		handleMultiPartData(req, res, async (err) => {
-			if (err) {
-				return next(CustomErrorHandler.serverError(err.message))
+	update: async (req: Request, res: Response, next: NextFunction) => {
+		const productSchema = Joi.object({
+			title: Joi.string().max(300).required(),
+			price: Joi.number().required(),
+			description: Joi.string().allow(''),
+			category: Joi.string(),
+			image: Joi.string().allow(''),
+			imageSource: Joi.string().allow(''),
+			createdBy!: Joi.string()
+		});
+		const { error } = productSchema.validate(req.body);
+		if (error) {
+			return next(error);
+		}
+		try {
+			const _product = await Product.findOne({ slug: req.params.slug }) as ProductDocument
+			if (!_product) {
+				return res.status(406).json({status: 406, message: 'Product is not found!'})
 			}
-			let filePath;
-			if (req.file) {
-				filePath = req.file.path;
-			}
-			const productSchema = Joi.object({
-				title: Joi.string().max(300),
-				price: Joi.number(),
-				description: Joi.string(),
-				category: Joi.string(),
-			});
-			const { error } = productSchema.validate(req.body);
-			if (error) {
-				if (filePath) {
-					fs.unlink(`${appRoot}/${filePath}`, (err: any) => {
-						if(err) {
-							return next(CustomErrorHandler.serverError(err.message))
-						}
-					})
+			if (!req?.isSuperAdmin) {
+				const product = {
+					"_id": _product._id,
+					"title": _product.title,
+					"price": _product.price,
+					"category": _product.category,
+					"description": _product.description,
+					"image": _product.image,
+					"createdBy": _product.createdBy,
+					"createdAt": _product.createdAt,
+					"updatedAt": _product.updatedAt,
+					"slug": req.body?.title ? slugify(req.body.title, { lower: true }) : _product.slug,
+					...req.body
 				}
-				return next(error);
+				return res.status(201).json({ data: product, status: 201, message: 'Success! product updated'})
 			}
-			try {
-				const _product = await Product.findOne({slug: req.params.slug}) as ProductDocument
-				if (!_product) {
-					return res.status(406).json({status: 406, message: 'Product is not found!'})
-				}
-				if (!req?.isSuperAdmin) {
-					const product = {
-						"_id": _product._id,
-            "title": _product.title,
-            "price": _product.price,
-            "category": _product.category,
-            "description": _product.description,
-            "image": _product.image,
-            "createdBy": _product.createdBy,
-            "createdAt": _product.createdAt,
-            "updatedAt": _product.updatedAt,
-            "slug": req.body?.title ? slugify(req.body.title, { lower: true }) : _product.slug,
+			
+			const product = await Product.findOneAndUpdate(
+				{
+					slug: req.params.slug
+				},
+				{
+					$set: {
 						...req.body
 					}
-					if (filePath) {
-						fs.unlink(`${appRoot}/${filePath}`, (err: any) => {
-							if(err) {
-								return next(CustomErrorHandler.serverError(err.message))
-							}
-						})
-					}
-					return res.status(201).json({ data: { ...product, ...req.body }, status: 201, message: 'Success! product updated'})
+				},
+				{
+					new: true,
+					useFindAndModify: false
 				}
-				
-				const product = await Product.findOneAndUpdate(
-					{
-						slug: req.params.slug
-					},
-					{
-						$set: {
-							...req.body
-						}
-					},
-					{
-						new: true,
-						useFindAndModify: false
-					}
-				);
-				res.status(201).json({ data: product, status: 201, message: 'Success! product updated by admin'})
-			} catch (err: any) {
-				return next(CustomErrorHandler.serverError(err))
-			}
-		})
+			);
+			res.status(201).json({ data: product, status: 201, message: 'Success! product updated by admin'})
+		} catch (err: any) {
+			return next(CustomErrorHandler.serverError(err))
+		}
 	},
 	description: async (req: Request, res: Response, next: NextFunction) => {
 		const slug = req.params.slug;
@@ -224,7 +204,7 @@ const productController = {
 				.populate([{path:'createdBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
 				.select('-__v -imageSource');
 			if(!product) {
-				return res.status(404).json({ status: 404, message: 'Product is not found!' })
+				return CustomErrorHandler.notFound('Product is not found!')
 			}
 			return res.json({ status: 200, data: product, message: 'Success! Product found'})
 		} catch (err) {
