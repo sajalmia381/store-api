@@ -7,8 +7,8 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-RUN npm install -g typescript
+RUN npm run build
 
 EXPOSE 8000
 
-CMD [ "npm", "src/app.js" ]
+CMD [ "node", "src/app.js" ]
