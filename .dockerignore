@@ -1,0 +1,9 @@
+.dockerfile
+Dockerfile
+node_modules
+.git
+
+AWS.md
+
+dump
+github_access_personal_token.txt

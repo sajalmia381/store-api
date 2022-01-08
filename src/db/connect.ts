@@ -7,7 +7,7 @@ import { DB_URL } from "../config";
 
 export default function () {
   const dbUrl: string = DB_URL || 'mongodb://localhost:27017/store-api';
-
+  console.log('DB url: ', dbUrl)
   return mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
       logger.info("Database connected...")

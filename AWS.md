@@ -129,8 +129,8 @@ Add the following to the location part of the server block
 
 ```
 server {
-    charset utf-8;
-    listen 80 default_server;
+  charset utf-8;
+  listen 80 default_server;
 	listen [::]:80 default_server;
 
 	# SSL configuration
