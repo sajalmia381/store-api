@@ -11,4 +11,4 @@ RUN npm install -g typescript
 
 EXPOSE 8000
 
-CMD [ "tsc", "src/app.ts" ]
+CMD [ "npm", "src/app.js" ]
