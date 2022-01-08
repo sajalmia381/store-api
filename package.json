@@ -2,9 +2,9 @@
   "name": "store-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "NODE_PATH=./build node build/index.js",
+    "start": "node src/app.js",
     "build": "tsc -p .",
     "dev": "nodemon --config nodemon.json src/app.ts",
     "deploy": "pm2 start ecosystem.config.js --node-args='-r tsconfig-paths/register'"
