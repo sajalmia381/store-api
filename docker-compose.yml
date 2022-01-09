@@ -6,14 +6,12 @@ services:
       - 3000:3000
   node-app:
     build: .
-    # ports:
-    #   - 8000:8000
     container_name: store-api
     restart: always
     environment:
       - APP_PORT=8000
       - APP_HOST=localhost
-      - DB_URL=mongodb://<USERNAME>:hello123@mongo:27017/store-api?authSource=admin
+      - DB_URL=mongodb://<USERNAME>:hello123@database:27017/store-api?authSource=admin
       - DEBUG_MODE=true
       - NODE_ENV=development
       - SECRET_KEY=ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8
@@ -22,8 +20,8 @@ services:
       - 8000
     command: ["node", "src/app.js"]
     depends_on:
-      - mongo
-  mongo:
+      - database
+  database:
     container_name: store-mongo
     restart: always
     environment:
