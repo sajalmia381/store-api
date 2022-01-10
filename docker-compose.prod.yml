@@ -32,7 +32,6 @@ services:
     ports:
       - "80:80"
     volumes:
-      - web-<USERNAME>:/var/www/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
@@ -44,17 +43,10 @@ services:
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
-      - web-<USERNAME>:/var/www/html
     depends_on:
       - webserver
-    command: certonly --web<USERNAME> --web<USERNAME>-path=/var/www/html --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d api.storerestapi.com -d www.api.storerestapi.com
+    command: certonly --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d test.storerestapi.com -d www.test.storerestapi.com
 volumes:
   mongo-db:
   certbot-etc:
   certbot-var:
-  web-<USERNAME>:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/ubuntu/store-api/views/
-      o: bind
