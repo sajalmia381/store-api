@@ -26,7 +26,7 @@ services:
     image: mongo
     volumes:
       - mongo-db:/data/db
-  webserver:  
+  webserver:
     container_name: store-webserver
     image: nginx:1.21.5-alpine
     ports:
