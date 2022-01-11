@@ -213,3 +213,7 @@ certbot renew --dry-run
 sudo apt install certbot python3-certbot-nginx
 
 Now visit https://yourdomain.com and you should see your Node app
+
+<!-- After Deploy -->
+
+$ sudo docker-compose -f docker-compose.prod.yml up --force-recreate --no-deps certbot
