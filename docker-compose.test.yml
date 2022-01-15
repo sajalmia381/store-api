@@ -8,17 +8,17 @@ services:
       - APP_PORT=8000
       - APP_HOST=localhost
       - DB_URL=mongodb://root:hello123@database:27017/store-api?authSource=admin
-      - DEBUG_MODE=false
+      - DEBUG_MODE=true
       - NODE_ENV=development
       - SECRET_KEY=!rad9TN`&B{!pg&Y($oTwOhYfEJ4{0sEBYtu]xqa2^8,Iyc^8HP[[XB,J$O)~BL
       - REFRESH_KEY=hOS1|4NM.P#F^BA]JiIX^B0AS@JY+E20Zphjs2ER[}FMJXq3}1vH~iGrQPqtycv
     expose:
       - 8000
+    command: ["node", "src/app.js"]
     depends_on:
       - database
     networks:
       - store-network
-    command: ["node", "src/app.js"]
   database:
     container_name: store-mongo
     restart: always
@@ -27,42 +27,26 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: hello123
     image: mongo
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo-db:/data/db
     networks:
       - store-network
   webserver:
-    image: store-client:latest
+    build: store-client:latest
     container_name: store-webserver
     ports:
-      - "80:3000"
+      - "3000:3000"
       - "443:443"
-      - "8000:8000"
     restart: always
     depends_on:
       - database
       - node-app
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/www/certbot
+    command: ["nginx", "-g", "daemon off;"]
     networks:
       - store-network
-    command: ["nginx", "-g", "daemon off;"]
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/www/certbot
-    depends_on:
-      - webserver
-    command: certonly --webroot --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d test.storerestapi.com
 volumes:
   mongo-db:
-  certbot-etc:
-  certbot-var:
 networks:
   store-network:
     driver: bridge
