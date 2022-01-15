@@ -69,6 +69,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
+      device: /usr/share/nginx/html
       o: bind
 networks:
   store-network:
