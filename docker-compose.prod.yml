@@ -66,6 +66,7 @@ volumes:
   certbot-etc:
   certbot-var:
   web-<USERNAME>:
+    driver: local
 networks:
   store-network:
     driver: bridge
