@@ -44,7 +44,6 @@ services:
       - database
       - node-app
     volumes:
-      - web-root:/usr/share/nginx/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
@@ -57,20 +56,13 @@ services:
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
-      - web-root:/usr/share/nginx/html
     depends_on:
       - webserver
-    command: certonly --webroot --webroot-path=/usr/share/nginx/html --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d test.storerestapi.com
+    command: certonly --webroot --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d test.storerestapi.com
 volumes:
   mongo-db:
   certbot-etc:
   certbot-var:
-  web-root:
-    driver: local
-    driver_opts:
-      type: none
-      device: /usr/share/nginx/html
-      o: bind
 networks:
   store-network:
     driver: bridge
