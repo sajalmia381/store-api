@@ -60,7 +60,7 @@ services:
       - web-<USERNAME>:/usr/share/nginx/html
     depends_on:
       - webserver
-    command: certonly --web<USERNAME> --web<USERNAME>-path=/usr/share/nginx/html --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d storerestapi.com
+    command: certonly --web<USERNAME> --web<USERNAME>-path=/usr/share/nginx/html --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d test.storerestapi.com
 volumes:
   mongo-db:
   certbot-etc:
