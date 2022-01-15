@@ -33,7 +33,7 @@ services:
     networks:
       - store-network
   webserver:
-    build: storerestapi/store-client:latest
+    image: storerestapi/store-client:latest
     container_name: store-webserver
     ports:
       - "80:3000"
