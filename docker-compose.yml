@@ -1,9 +1,5 @@
 version: '3'
 services:
-  client-app:
-    image: store-admin:latest
-    ports:
-      - 3000:3000
   node-app:
     build: .
     container_name: store-api
@@ -21,6 +17,8 @@ services:
     command: ["node", "src/app.js"]
     depends_on:
       - database
+    networks:
+      - store-network
   database:
     container_name: store-mongo
     restart: always
@@ -28,7 +26,27 @@ services:
       MONGO_INITDB_ROOT_USERNAME: <USERNAME>
       MONGO_INITDB_ROOT_PASSWORD: hello123
     image: mongo
+    ports:
+      - "27018:27017"
     volumes:
       - mongo-db:/data/db
+    networks:
+      - store-network
+  webserver:
+    build: /home/klover/programming/private/store-admin
+    container_name: store-webserver
+    ports:
+      - "3000:3000"
+      - "443:443"
+    restart: always
+    depends_on:
+      - database
+      - node-app
+    command: ["nginx", "-g", "daemon off;"]
+    networks:
+      - store-network
 volumes:
   mongo-db:
+networks:
+  store-network:
+    driver: bridge
