@@ -131,6 +131,13 @@ sudo nano /etc/nginx/sites-available/default
 Add the following to the location part of the server block
 
 ```
+older for default
+location / {
+    root /opt/frontend;
+    try_files $uri /index.html;
+}
+
+----
 server {
   charset utf-8;
   listen 80 default_server;
@@ -145,8 +152,12 @@ server {
 
     # Angular app & front-end files
     location / {
-        root /opt/frontend;
-        try_files $uri /index.html;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
     }
 
     # Node api reverse proxy
