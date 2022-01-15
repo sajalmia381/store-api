@@ -67,6 +67,9 @@ volumes:
   certbot-var:
   web-root:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
 networks:
   store-network:
     driver: bridge
