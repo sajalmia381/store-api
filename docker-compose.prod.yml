@@ -44,6 +44,7 @@ services:
       - database
       - node-app
     volumes:
+      - web-root:/usr/share/nginx/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
@@ -64,6 +65,7 @@ volumes:
   mongo-db:
   certbot-etc:
   certbot-var:
+  web-root:
 networks:
   store-network:
     driver: bridge
