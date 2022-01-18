@@ -57,7 +57,7 @@ services:
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
-      - web-<USERNAME>:/var/www/html
+      - web-<USERNAME>:/usr/share/nginx/html
     depends_on:
       - webserver
     networks:
@@ -67,7 +67,7 @@ volumes:
   mongo-db:
   certbot-etc:
   certbot-var:
-  web<USERNAME>:
+  web-<USERNAME>:
 networks:
   store-network:
     driver: bridge
