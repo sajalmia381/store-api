@@ -33,7 +33,7 @@ services:
     networks:
       - store-network
   webserver:
-    image: store-client:latest
+    image: storerestapi/store-client:latest
     container_name: store-webserver
     ports:
       - "80:3000"
@@ -52,13 +52,15 @@ services:
     command: ["nginx", "-g", "daemon off;"]
   certbot:
     image: certbot/certbot
-    container_name: certbot
+    container_name: store-certbot
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/www/certbot
     depends_on:
       - webserver
-    command: certonly --web<USERNAME> --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d test.storerestapi.com
+    networks:
+      - store-network
+    command: certonly --web<USERNAME> --web<USERNAME>-path /usr/share/nginx/html --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d storerestapi.com
 volumes:
   mongo-db:
   certbot-etc:
