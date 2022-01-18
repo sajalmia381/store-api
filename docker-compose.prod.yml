@@ -60,7 +60,7 @@ services:
       - webserver
     networks:
       - store-network
-    command: certonly --webroot --webroot-path /usr/share/nginx/html --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d storerestapi.com
+    command: certonly --webroot --webroot-path /var/www/certbot --email storerestapi@gmail.com --agree-tos --no-eff-email --staging -d storerestapi.com
 volumes:
   mongo-db:
   certbot-etc:
