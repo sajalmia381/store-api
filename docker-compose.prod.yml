@@ -1,7 +1,7 @@
 version: '3'
 services:
   node-app:
-    build: .
+    image: storerestapi/store-api:latest
     container_name: store-api
     restart: always
     environment:
