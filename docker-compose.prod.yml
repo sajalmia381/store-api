@@ -36,7 +36,7 @@ services:
     image: storerestapi/store-client:latest
     container_name: store-webserver
     ports:
-      - "80:3000"
+      - "80:80"
       - "443:443"
       - "8000:8000"
     restart: always
