@@ -203,8 +203,10 @@ const productController = {
 				.findOne({slug})
 				.populate([{path:'createdBy', select: "_id name role"}, { path: 'category', select: '_id name slug'}])
 				.select('-__v -imageSource');
+			console.log('product', product)
 			if(!product) {
-				return CustomErrorHandler.notFound('Product is not found!')
+				console.log('product', product)
+				return next(CustomErrorHandler.notFound('Product is not found!'))
 			}
 			return res.json({ status: 200, data: product, message: 'Success! Product found'})
 		} catch (err) {
