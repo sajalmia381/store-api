@@ -205,7 +205,6 @@ const productController = {
 				.select('-__v -imageSource');
 			console.log('product', product)
 			if(!product) {
-				console.log('product', product)
 				return next(CustomErrorHandler.notFound('Product is not found!'))
 			}
 			return res.json({ status: 200, data: product, message: 'Success! Product found'})
