@@ -15,7 +15,7 @@ sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-3-111-52-119.ap-south-1.comput
 sudo scp -i <path-to-key-file> -r <path-to-local-dist-folder>/* ubuntu@<domain name>:/opt/front-end
 
 sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dump/* ubuntu@ec2-3-111-52-119.ap-south-1.compute.amazonaws.com
-:/opt/db-data
+:/opt/local-data
 
 sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dist/store-admin/* ubuntu@ec2-3-111-52-119.ap-south-1.compute.amazonaws.com
 :/opt/frontend
@@ -139,41 +139,26 @@ location / {
 
 ----
 server {
-  charset utf-8;
-  listen 80 default_server;
-	listen [::]:80 default_server;
+  listen 80;
 
-	# SSL configuration
-	#
-	# listen 443 ssl default_server;
-	# listen [::]:443 ssl default_server;
+  server_name storerestapi.com;
+  <USERNAME> /opt/frontend;
+  index index.html;
 
-    server_name storerestapi.com www.storerestapi.com;
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
 
-    # Angular app & front-end files
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
+  location /api/ {
+    proxy_set_header Host $host;
+    proxy_pass http://localhost:8000;
+    proxy_http_version 1.1;
+  }
 
-    # Node api reverse proxy
-    location /api/ {
-        proxy_pass http://localhost:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-
-    // Check health
-    location /health {
-        return 200 'I am live :)';
-    }
+  // Check health
+  location /health {
+    return 200 'I am live :)';
+  }
 }
 
 ```
