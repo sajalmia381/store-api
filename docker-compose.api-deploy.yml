@@ -16,7 +16,7 @@ services:
       - "8000:8000"
     expose:
       - 8000
-    command: ["node", "src/app.js"]
+    command: ["node", "dist/app.js"]
     depends_on:
       - database
     networks:

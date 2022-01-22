@@ -2,3 +2,5 @@ node_modules
 dump
 github_access_personal_token.txt
 backup
+
+dist
