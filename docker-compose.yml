@@ -14,7 +14,9 @@ services:
       - REFRESH_KEY=ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8
     expose:
       - 8000
-    command: ["node", "src/app.js"]
+    ports:
+      - "8000:8000"
+    command: ["node", "dist/app.js"]
     depends_on:
       - database
     networks:
@@ -30,19 +32,6 @@ services:
       - "27018:27017"
     volumes:
       - mongo-db:/data/db
-    networks:
-      - store-network
-  webserver:
-    build: /home/klover/programming/private/store-admin
-    container_name: store-webserver
-    ports:
-      - "3000:3000"
-      - "443:443"
-    restart: always
-    depends_on:
-      - database
-      - node-app
-    command: ["nginx", "-g", "daemon off;"]
     networks:
       - store-network
 volumes:

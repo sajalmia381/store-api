@@ -14,7 +14,7 @@ services:
       - REFRESH_KEY=ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8
     expose:
       - 8000
-    command: ["node", "src/app.js"]
+    command: ["node", "dist/app.js"]
     depends_on:
       - database
     networks:

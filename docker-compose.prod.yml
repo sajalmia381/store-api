@@ -18,7 +18,7 @@ services:
       - database
     networks:
       - store-network
-    command: ["node", "src/app.js"]
+    command: ["node", "dist/app.js"]
   database:
     container_name: store-mongo
     restart: always
