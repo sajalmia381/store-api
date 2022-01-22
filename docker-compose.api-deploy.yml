@@ -12,6 +12,8 @@ services:
       - NODE_ENV=development
       - SECRET_KEY=ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8
       - REFRESH_KEY=ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8
+    ports:
+      - "8000:8000"
     expose:
       - 8000
     command: ["node", "dist/app.js"]
