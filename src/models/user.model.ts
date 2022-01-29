@@ -9,7 +9,9 @@ export interface UserDocument extends Document {
   role: string;
   updatedAt: Date;
   createdAt: Date;
+  lastLoginAt?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>
+  updateLogin(): void
 }
 
 const UserSchema = new Schema({
@@ -17,6 +19,7 @@ const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   number: { type: Number },
+  lastLoginAt: { type: Date },
   role: { type: String, default: 'ROLE_CUSTOMER' }
 }, { timestamps: true})
 
@@ -40,5 +43,10 @@ UserSchema.pre("save", async function (next: mongoose.HookNextFunction) {
 UserSchema.methods.comparePassword = async function (candidatePassword: string) {
   const user = this as UserDocument;
   return bcrypt.compare(candidatePassword, user.password).catch(() => false) 
+}
+UserSchema.methods.updateLogin = async function () {
+  const user = this as UserDocument;
+  user.lastLoginAt = new Date();
+  user.save()
 }
 export default model<UserDocument>('User', UserSchema);

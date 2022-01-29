@@ -26,7 +26,7 @@ const authController = {
     }
     // Start database query
     try {
-      const user = await User.findOne({email: req.body.email}).select("-updatedAt -password -__v");
+      const user = await User.findOne({email: req.body.email}).select("-updatedAt -__v");
       if (!user) {
         return next(CustomErrorHandler.badRequest('User is not found'));
       }
@@ -47,7 +47,9 @@ const authController = {
       if(user?.role === "ROLE_SUPER_ADMIN") {
         await RefreshToken.create({ token: refresh_token });
       }
-      res.json({access_token, refresh_token, data: user, message: 'Sign in success', status: 200 })
+      user.updateLogin();
+      const responseUserPayload = { ...payload, createdAt: user.createdAt, lastLoginAt: user?.lastLoginAt}
+      res.json({access_token, refresh_token, data: responseUserPayload, message: 'Sign in success', status: 200 })
       res.end();
     } catch (err) {
       return next(err)
@@ -101,7 +103,8 @@ const authController = {
       }
       const access_token = JwtService.sign(payload);
       const refresh_token = JwtService.sign(payload, '1y', REFRESH_KEY);
-      res.status(201).json({status: 201, message: 'User created', access_token, refresh_token})
+      const responseUserPayload = { ...payload, createdAt: user.createdAt, lastLoginAt: null}
+      res.status(201).json({status: 201, message: 'User created', access_token, refresh_token, user: responseUserPayload})
     } catch (err: any) {
       return next(CustomErrorHandler.serverError(err.message))
     }
@@ -144,7 +147,9 @@ const authController = {
       if (req?.isSuperAdmin) {
         await RefreshToken.create({token: refresh_token})
       }
-      res.status(201).json({ access_token, refresh_token, user })
+      user.updateLogin();
+      const responseUserPayload = { ...payload, createdAt: user.createdAt, lastLoginAt: user?.lastLoginAt}
+      res.status(201).json({ access_token, refresh_token, user: responseUserPayload })
     } catch (err) {
       return next(CustomErrorHandler.serverError())
     }
