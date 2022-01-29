@@ -26,7 +26,7 @@ const authController = {
     }
     // Start database query
     try {
-      const user = await User.findOne({email: req.body.email}).select("-updateAt -__v");
+      const user = await User.findOne({email: req.body.email}).select("-updatedAt -password -__v");
       if (!user) {
         return next(CustomErrorHandler.badRequest('User is not found'));
       }
