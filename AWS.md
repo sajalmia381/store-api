@@ -132,7 +132,7 @@ Add the following to the location part of the server block
 ```
 older for default
 location / {
-    <USERNAME> /opt/frontend;
+    <USERNAME> /usr/share/nginx/html;
     try_files $uri /index.html;
 }
 
@@ -141,7 +141,7 @@ server {
   listen 80;
 
   server_name storerestapi.com;
-  <USERNAME> /opt/frontend;
+  <USERNAME> /usr/share/nginx/html;
   index index.html;
 
   location / {
