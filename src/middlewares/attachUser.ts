@@ -7,10 +7,9 @@ const attachUser = (req: Request, res: Response, next: NextFunction) => {
   if (headerAuthorization) {
     const token = headerAuthorization.split(' ')[1];
     try {
-      const { _id, email, role } = JwtService.verify(token) as JwtPayload;
-      const user = { _id, email, role }
-      req.user = user;
-      req.isSuperAdmin = user.role === 'ROLE_SUPER_ADMIN'
+      const { data } = JwtService.verify(token) as JwtPayload;
+      req.user = data;
+      req.isSuperAdmin = data.role === 'ROLE_SUPER_ADMIN'
     } catch (err) {
       console.log('user attach err: ', err)
       return next()

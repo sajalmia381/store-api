@@ -121,8 +121,8 @@ const authController = {
       const body_refresh_token = req.body.refresh_token
       let userId;
       try {
-        const { _id } = JwtService.verify(body_refresh_token, REFRESH_KEY) as JwtPayload;
-        userId = _id
+        const { data } = JwtService.verify(body_refresh_token, REFRESH_KEY) as JwtPayload;
+        userId = data?._id
       } catch (err) {
         return next(CustomErrorHandler.unAuthorization('Invalid refresh token'))
       }
