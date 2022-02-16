@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { JwtPayload } from 'jsonwebtoken';
+import Utils from '../services/Utils';
 import { REFRESH_KEY } from '../config';
 import { RefreshToken, User } from '../models';
 import CustomErrorHandler from '../services/CustomErrorHandler';
@@ -42,14 +43,14 @@ const authController = {
         role: user.role,
         email: user.email
       }
-      const access_token = JwtService.sign(payload);
-      const refresh_token = JwtService.sign(payload, '30d', REFRESH_KEY)
+      const tokenValidity: any = req.query?.duration;
+      const refreshTokenValidity: any = req.query?.refreshDuration
+      const [access_token, refresh_token] = JwtService.generateJWTTokens(payload, tokenValidity, refreshTokenValidity);
       if(user?.role === "ROLE_SUPER_ADMIN") {
         await RefreshToken.create({ token: refresh_token });
       }
       user.updateLogin();
-      const responseUserPayload = { ...payload, createdAt: user.createdAt, lastLoginAt: user?.lastLoginAt}
-      res.json({access_token, refresh_token, data: responseUserPayload, message: 'Sign in success', status: 200 })
+      res.json({data: { access_token, refresh_token }, message: 'Sign in success', status: 200 })
       res.end();
     } catch (err) {
       return next(err)
@@ -101,10 +102,9 @@ const authController = {
         role: user.role,
         email: user.email
       }
-      const access_token = JwtService.sign(payload);
-      const refresh_token = JwtService.sign(payload, '1y', REFRESH_KEY);
-      const responseUserPayload = { ...payload, createdAt: user.createdAt, lastLoginAt: null}
-      res.status(201).json({status: 201, message: 'User created', access_token, refresh_token, user: responseUserPayload})
+      const access_token = JwtService.sign(payload, '15m');
+      const refresh_token = JwtService.sign(payload, '7d', REFRESH_KEY)
+      res.status(201).json({status: 201, message: 'User created', data: { access_token, refresh_token }})
     } catch (err: any) {
       return next(CustomErrorHandler.serverError(err.message))
     }
@@ -118,14 +118,10 @@ const authController = {
       return next(error)
     }
     try {
-      const refreshTokenObj = await RefreshToken.findOne({ token: req.body.refresh_token });
-      console.log('refreshToken', refreshTokenObj)
-      if (!refreshTokenObj) {
-        return next(CustomErrorHandler.unAuthorization('Invalid, Token is not found'))
-      }
+      const body_refresh_token = req.body.refresh_token
       let userId;
       try {
-        const { _id } = JwtService.verify(refreshTokenObj.token, REFRESH_KEY) as JwtPayload;
+        const { _id } = JwtService.verify(body_refresh_token, REFRESH_KEY) as JwtPayload;
         userId = _id
       } catch (err) {
         return next(CustomErrorHandler.unAuthorization('Invalid refresh token'))
@@ -142,14 +138,20 @@ const authController = {
         email: user.email,
         role: user.role
       }
-      const access_token = JwtService.sign(payload);
-      const refresh_token = JwtService.sign(payload, '30d', REFRESH_KEY)
+      const tokenValidity: any = req.query?.duration;
+      const refreshTokenValidity: any = req.query?.refreshDuration;
+      const [access_token, refresh_token] = JwtService.generateJWTTokens(payload, tokenValidity, refreshTokenValidity);
+      
       if (req?.isSuperAdmin) {
+        const refreshTokenObj = await RefreshToken.findOne({ token: body_refresh_token });
+        if (!refreshTokenObj) {
+          return next(CustomErrorHandler.unAuthorization('Invalid, Token is not found'))
+        }
+        await RefreshToken.deleteOne({token: body_refresh_token})
         await RefreshToken.create({token: refresh_token})
       }
       user.updateLogin();
-      const responseUserPayload = { ...payload, createdAt: user.createdAt, lastLoginAt: user?.lastLoginAt}
-      res.status(201).json({ access_token, refresh_token, user: responseUserPayload })
+      res.status(201).json({ status: 201, message: 'New tokens created', data: { access_token, refresh_token }})
     } catch (err) {
       return next(CustomErrorHandler.serverError())
     }
