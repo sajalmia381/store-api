@@ -10,9 +10,8 @@ const authorizationHandler = (req: Request, res: Response, next: NextFunction) =
   }
   const token = headerAuthorization.split(' ')[1];
   try {
-    const { _id, email, role } = JwtService.verify(token) as JwtPayload;
-    const user = { _id, email, role }
-    req.user = user;
+    const { data } = JwtService.verify(token) as JwtPayload;
+    req.user = data;
     return next()
   } catch (err) {
     return next(CustomErrorHandler.unAuthorization())
