@@ -141,7 +141,6 @@ const authController = {
       const tokenValidity: any = req.query?.duration;
       const refreshTokenValidity: any = req.query?.refreshDuration;
       const [access_token, refresh_token] = JwtService.generateJWTTokens(payload, tokenValidity, refreshTokenValidity);
-      
       if (req?.isSuperAdmin) {
         const refreshTokenObj = await RefreshToken.findOne({ token: body_refresh_token });
         if (!refreshTokenObj) {
@@ -151,7 +150,7 @@ const authController = {
         await RefreshToken.create({token: refresh_token})
       }
       user.updateLogin();
-      res.status(201).json({ status: 201, message: 'New tokens created', data: { access_token, refresh_token }})
+      res.status(201).json({ status: 201, message: 'Success! New tokens created', data: { access_token, refresh_token }})
     } catch (err) {
       return next(CustomErrorHandler.serverError())
     }
