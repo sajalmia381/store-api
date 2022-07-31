@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # S3 bucket name
-BUCKET=sales-mongodb-database-backup-bucket/backup/
-BACKUPBUCKET=sales-mongodb-database-backup-bucket/backup/
+BUCKET=storerestapi/backup/
+BACKUPBUCKET=storerestapi/backup/
 
 # Linux user account
 USER=ubuntu
