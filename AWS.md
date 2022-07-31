@@ -11,13 +11,16 @@
 ```
 sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-3-111-52-119.ap-south-1.compute.amazonaws.com
 
+<!-- New -->
+sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-52-66-223-120.ap-south-1.compute.amazonaws.com
+
 
 sudo scp -i <path-to-key-file> -r <path-to-local-dist-folder>/* ubuntu@<domain name>:/opt/front-end
 
-sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dump/* ubuntu@ec2-3-111-52-119.ap-south-1.compute.amazonaws.com:/opt/local-data
+sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dump/* ubuntu@ec2-52-66-223-120.ap-south-1.compute.amazonaws.com:/opt/local-data
 
-sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dist/store-admin/* ubuntu@ec2-3-111-52-119.ap-south-1.compute.amazonaws.com
-:/opt/frontend
+sudo scp -i ~/Desktop/pem/storeApi.pem -r ./dist/store-admin/* ubuntu@ec2-52-66-223-120.ap-south-1.compute.amazonaws.com
+:/usr/share/nginx/html
 ```
 
 ## 0. Mongoose
