@@ -205,7 +205,6 @@ const productController = {
 				.findOne({ slug })
 				.populate([{ path: 'createdBy', select: "_id name role" }, { path: 'category', select: '_id name slug' }])
 				.select('-__v -imageSource');
-			console.log('product', product)
 			if (!product) {
 				return next(CustomErrorHandler.notFound('Product is not found!'))
 			}
