@@ -7,10 +7,6 @@
 1. sudo mkdir /opt/front-end
 2. sudo chown ubuntu:ubuntu /opt/front-end
 3. Example:
-
-```
-sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-3-111-52-119.ap-south-1.compute.amazonaws.com
-
 <!-- New -->
 sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-52-66-223-120.ap-south-1.compute.amazonaws.com
 
