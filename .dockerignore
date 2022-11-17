@@ -1,9 +1,23 @@
-.dockerfile
+.dockerignore
+
 Dockerfile
 node_modules
 .git
-
+.vscode
+.idea
 AWS.md
 
 dump
 github_access_personal_token.txt
+.env
+docker-compose
+docker-compose.*
+
+ssl_renew.sh
+secret.md
+nginx_signing.key
+mongodb.MD
+ecosystem.config.js
+docker-deploy.md
+deployment.Md
+backup_db_to_s3.sh
