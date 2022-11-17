@@ -8,9 +8,8 @@ mongodump -db=klovercloud-cost-management-security-server --host="mongodb://root
 
 
 ```
-
 ## mongodb Restore to server db
 
 ```shell
-mongorestore mongodb://root:hello123@52.66.223.120:27017 /opt/backup/mongodump-2022-03-24
+mongorestore mongodb://root:hello123@3.7.68.106:27017 /opt/backup/mongodump-2022-03-24
 ```
