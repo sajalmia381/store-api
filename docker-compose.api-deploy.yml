@@ -38,4 +38,4 @@ volumes:
   mongo-db:
 networks:
   store-network:
-    driver: bridge
+    external: true
