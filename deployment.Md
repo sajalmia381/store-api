@@ -1,5 +1,9 @@
 
 # Deployment Store-Api App
+## Create Docker Store-Api Network
+```sh
+docker network create store-network
+```
 ## Build Docker Images
 ```sh
 docker-compose -f docker-compose.api-deploy.yml build
