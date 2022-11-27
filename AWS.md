@@ -8,12 +8,12 @@
 2. sudo chown ubuntu:ubuntu /opt/front-end
 3. Example:
 <!-- AMD T2 Micro -->
-$ sudo ssh -i ~/Desktop/pem/virginaStoreApi.pem ubuntu@ec2-54-198-175-185.compute-1.amazonaws.com
+sudo ssh -i ~/Desktop/pem/virginaStoreApi.pem ubuntu@ec2-54-198-175-185.compute-1.amazonaws.com
 
 <!-- ARM -->
-$ sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-52-66-223-120.ap-south-1.compute.amazonaws.com
+sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-52-66-223-120.ap-south-1.compute.amazonaws.com
 <!-- NEW ARM T4G -->
-$ sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-3-7-68-106.ap-south-1.compute.amazonaws.com
+sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-3-7-68-106.ap-south-1.compute.amazonaws.com
 
 
 sudo scp -i <path-to-key-file> -r <path-to-local-dist-folder>/* ubuntu@<domain name>:/opt/front-end

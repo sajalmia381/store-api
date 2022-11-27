@@ -7,7 +7,7 @@ services:
     environment:
       - APP_PORT=8000
       - APP_HOST=localhost
-      - DB_URL=mongodb://root:hello123@database:27017/store-api?authSource=admin
+      - DB_URL=mongodb://root:gCrm4Q8V8e@database:27017/store-api?authSource=admin
       - DEBUG_MODE=true
       - NODE_ENV=development
       - SECRET_KEY=!rad9TN`&B{!pg&Y($oTwOhYfEJ4{0sEBYtu]xqa2^8,Iyc^8HP[[XB,J$O)~BL
