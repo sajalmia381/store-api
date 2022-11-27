@@ -13,3 +13,12 @@ mongodump -db=<K8s-DEPLOYMENT-SERVICE> --host="mongodb://<USERNAME>:<PASSWORD>@<
 ```shell
 mongorestore mongodb://<USERNAME>:<PASSWORD>@3.7.68.106:27017 /opt/backup/mongodump-2022-03-24
 ```
+
+## Access docker mongo container
+```shell
+docker exec -it store-api bash/sh
+```
+## Access mongosh from docker
+```shell
+mongosh -u <USERNAME> -p hello123
+```
