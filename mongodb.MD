@@ -13,3 +13,12 @@ mongodump -db=klovercloud-cost-management-security-server --host="mongodb://root
 ```shell
 mongorestore mongodb://root:gCrm4Q8V8e@3.7.68.106:27017 /opt/backup/mongodump-2022-03-24
 ```
+
+## Access docker mongo container
+```shell
+docker exec -it store-api bash/sh
+```
+## Access mongosh from docker
+```shell
+mongosh -u root -p hello123
+```
