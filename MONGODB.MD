@@ -22,3 +22,16 @@ docker exec -it store-api bash/sh
 ```shell
 mongosh -u <USERNAME> -p hello123
 ```
+
+
+<!-- Localhost -->
+<!-- Dump Store Api Database -->
+```sh
+mongodump --uri=mongodb://localhost:27017/store-api --out=./backup/db
+```
+
+
+<!-- Dump Store Api Go Database -->
+```sh
+mongodump --uri=mongodb://localhost:27017/store-api-go --out=./backup/db
+```
