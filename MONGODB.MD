@@ -25,13 +25,18 @@ mongosh -u <USERNAME> -p hello123
 
 
 <!-- Localhost -->
-<!-- Dump Store Api Database -->
+## mongodb Restore to local
+```shell
+mongorestore --uri=mongodb://localhost:27017/store-api ./store-api
+```
+
+## Dump Store Api Database
 ```sh
 mongodump --uri=mongodb://localhost:27017/store-api --out=./backup/db
 ```
 
 
-<!-- Dump Store Api Go Database -->
+## Dump Store Api Go Database
 ```sh
 mongodump --uri=mongodb://localhost:27017/store-api-go --out=./backup/db
 ```
