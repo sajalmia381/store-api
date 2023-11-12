@@ -101,7 +101,7 @@ const productController = {
 			category: Joi.string(),
 			image: Joi.string().allow(''),
 			imageSource: Joi.string().allow(''),
-			createdBy!: Joi.string()
+			createdBy: Joi.string()
 		});
 		const { error } = productSchema.validate(req.body);
 		if (error) {
@@ -151,7 +151,7 @@ const productController = {
 			category: Joi.string(),
 			image: Joi.string().allow(''),
 			imageSource: Joi.string().allow(''),
-			createdBy!: Joi.string()
+			createdBy: Joi.string()
 		});
 		const { error } = productSchema.validate(req.body);
 		if (error) {
