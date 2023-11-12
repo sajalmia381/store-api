@@ -1,3 +1,8 @@
+## Mongo Compass
+```
+mongodb://<USERNAME>:<PASSWORD>@3.7.68.106:27017
+```
+
 ## Dump server DB
 
 ```shell
