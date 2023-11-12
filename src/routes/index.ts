@@ -22,7 +22,7 @@ export default function (app: Express) {
   // Cart
   app.use('/carts', cartRoute)
   // Category
-  app.use('categories', categoryRoutes)
+  app.use('/categories', categoryRoutes)
   // Todo
   app.use('/todos', todoRoute)
 }
