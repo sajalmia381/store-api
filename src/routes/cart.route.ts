@@ -4,11 +4,15 @@ import attachUser from '../middlewares/attachUser';
 
 const app = Router();
 
+// Authenticated User
+app.get('/cart', attachUser, cartController.getByUser);
+app.post('/cart/add', attachUser, cartController.updateByUser);
+app.put('/cart/update', attachUser, cartController.updateByUser);
+app.delete('/cart/remove', attachUser, cartController.removeProductByUser);
 
-app.get('/', attachUser, cartController.list);
+// Dashboard
+app.get('/carts', cartController.list);
+app.get('/carts/:id', cartController.getById);
 
-app.get('/:id', attachUser, cartController.description);
-
-// app.post('cart/', attachUser, cartController.add);
 
 export default app;
