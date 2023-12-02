@@ -19,6 +19,11 @@ docker-compose -f docker-compose.api-deploy.yml up -d
 docker-compose -f docker-compose.api-deploy.yml up --no-deps -d node-app
 ```
 
+## Restart Service
+```sh
+docker-compose -f docker-compose.api-deploy.yml restart node-app --no-deps
+```
+
 ## Down docker images
 ```sh
 docker-compose -f docker-compose.api-deploy.yml down -v
