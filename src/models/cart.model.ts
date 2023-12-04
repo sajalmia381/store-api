@@ -9,6 +9,11 @@ import { ObjectId } from 'mongodb'
 import { ProductDocument } from "./product.model";
 import { UserDocument } from "./user.model";
 
+type ProductSpecType = {
+  productId: string,
+  quantity: number
+}
+
 export interface IProductSpecifcation {
   product: PopulatedDoc<ProductDocument & Document>;
   quantity: number;
@@ -20,7 +25,7 @@ export interface ICartDocument extends Document {
   total?: number;
   updatedAt: Date;
   createdAt: Date;
-  addProduct: (productSpec: any) => ICartDocument;
+  addProducts: (productSpec: any) => ICartDocument;
 }
 
 export const ProductSpecifcationSchema = new Schema<IProductSpecifcation>(
@@ -87,12 +92,7 @@ CartSchema.pre("save", async function name(next: HookNextFunction) {
 //   }
 // }
 
-type ProductSpecType = {
-  productId: string,
-  quantity: number
-}
-
-CartSchema.method("addProduct", function (spec: ProductSpecType[] | ProductSpecType) {
+CartSchema.method("addProducts", function (spec: ProductSpecType[] | ProductSpecType) {
   const cart = this as ICartDocument;
 
   if (Array.isArray(spec)) {
