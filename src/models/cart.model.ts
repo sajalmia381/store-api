@@ -38,11 +38,11 @@ export const CartSchema = new Schema<CartDocument>(
   { timestamps: true }
 );
 
-// CartSchema.pre("save", async function name(next: HookNextFunction) {
-//   let obj = this as CartDocument;
-//   console.log("pre save", obj);
-//   return next();
-// });
+CartSchema.pre("save", async function name(next: HookNextFunction) {
+  let obj = this as CartDocument;
+  console.log("pre save", obj);
+  return next();
+});
 
 // CartSchema.statics.getByUserOrCreate = async function (userId: string) {
 //   try {
