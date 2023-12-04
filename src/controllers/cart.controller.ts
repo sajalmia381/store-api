@@ -6,11 +6,12 @@ import { UserDocument } from "../models/user.model";
 import Product, { ProductDocument } from "../models/product.model";
 
 const ANONYMOUS_USER_ID = "612e4959345dcc333ac6cb35";
+
 /**
  * @description Populate Product data transform
  * @param {ProductDocument} product - ProductDocument
  * @param {string} _id - string
- * @return {{_id: string, title: string, slug: string, price: number}} {_id: string, title: string, slug: string, price: number}
+ * @returns {{_id: string, title: string, slug: string, price: number}} {_id: string, title: string, slug: string, price: number}
  */
 function transformProduct(doc: ProductDocument, _id: string) {
   return {
@@ -21,6 +22,11 @@ function transformProduct(doc: ProductDocument, _id: string) {
   };
 }
 
+/**
+ * @description Populate cart
+ * @param {string} _id - string
+ * @returns {Array} {user: {_id: string, name:string, email: string}, product: transformProduct}
+ */
 function cartPopulate() {
   return [
     {
@@ -79,7 +85,6 @@ const userSpecificCartController = {
   /**
    * @description Get login user cart or empty array
    * @Development
-   *
    */
   getByUser: async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?._id || ANONYMOUS_USER_ID;
@@ -106,7 +111,6 @@ const userSpecificCartController = {
   /**
    * @description Update product quantity on user cart
    * @Development
-   *
    */
   updateByUser: async (req: Request, res: Response, next: NextFunction) => {
     const cartSchema = Joi.object({
@@ -122,16 +126,6 @@ const userSpecificCartController = {
     const { productId, quantity, userId } = req.body;
     const finalUserId = userId || req.user?._id || ANONYMOUS_USER_ID;
 
-    const cart = new Cart({
-      user: finalUserId,
-      products: [
-        {
-          product: productId,
-          quantity,
-        },
-      ],
-    });
-
     try {
       const _cart = await getByUserOrCreate(finalUserId);
       if (_cart === null) {
@@ -142,6 +136,15 @@ const userSpecificCartController = {
         });
       }
       if (!req.isSuperAdmin) {
+        const cart = new Cart({
+          user: finalUserId,
+          products: [
+            {
+              product: productId,
+              quantity,
+            },
+          ],
+        });
         const product = await Product.findById(productId);
         if (product === null) {
           return res.json({
@@ -208,7 +211,6 @@ const userSpecificCartController = {
   /**
    * @description Remove product from user cart
    * @Development
-   *
    */
   removeProductByUser: async (
     req: Request,
@@ -423,11 +425,11 @@ const cartController = {
         })
       ),
     });
-
     const { error } = cartSchema.validate(req.body);
     if (error) {
       return next(error);
     }
+
     try {
       if (!req?.isSuperAdmin) {
         const _cart = await Cart.findById(req.params.id)
@@ -438,16 +440,18 @@ const cartController = {
             .status(406)
             .json({ status: 406, message: "Cart is not found!" });
         }
+
+        _cart.products = [];
+        let newCart = _cart.addProduct(req.body.products);
+        newCart = await newCart.populate(cartPopulate()).execPopulate();
         const cart = {
           _id: _cart._id,
           user: _cart.user,
-          products: req.body.products.map((spec: any) => ({
-            product: { _id: spec.productId },
-            quantity: spec.quantity,
-          })),
+          products: newCart.products,
           createdAt: _cart.createdAt,
           updatedAt: _cart.updatedAt,
         };
+
         return res.status(201).json({
           data: cart,
           status: 201,

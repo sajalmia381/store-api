@@ -5,31 +5,33 @@ import {
   PopulatedDoc,
   Schema,
 } from "mongoose";
+import { ObjectId } from 'mongodb'
 import { ProductDocument } from "./product.model";
 import { UserDocument } from "./user.model";
 
-export interface ProductSpecifcation {
+export interface IProductSpecifcation {
   product: PopulatedDoc<ProductDocument & Document>;
   quantity: number;
 }
 
-export interface CartDocument extends Document {
+export interface ICartDocument extends Document {
   user: PopulatedDoc<UserDocument & Document>;
-  products?: [ProductSpecifcation];
+  products?: IProductSpecifcation[];
   total?: number;
   updatedAt: Date;
   createdAt: Date;
+  addProduct: (productSpec: any) => ICartDocument;
 }
 
-export const ProductSpecifcationSchema = new Schema<ProductSpecifcation>(
+export const ProductSpecifcationSchema = new Schema<IProductSpecifcation>(
   {
-    product: { type: "ObjectId", ref: "Product"},
+    product: { type: "ObjectId", ref: "Product" },
     quantity: { type: Number, required: true },
   },
   { _id: false }
 );
 
-export const CartSchema = new Schema<CartDocument>(
+export const CartSchema = new Schema<ICartDocument>(
   {
     user: { type: "ObjectId", ref: "User", unique: true },
     products: [ProductSpecifcationSchema],
@@ -39,7 +41,7 @@ export const CartSchema = new Schema<CartDocument>(
 );
 
 CartSchema.pre("save", async function name(next: HookNextFunction) {
-  let obj = this as CartDocument;
+  let obj = this as ICartDocument;
   console.log("pre save", obj);
   return next();
 });
@@ -85,6 +87,37 @@ CartSchema.pre("save", async function name(next: HookNextFunction) {
 //   }
 // }
 
-const Cart = model<CartDocument>("Cart", CartSchema, "carts");
+type ProductSpecType = {
+  productId: string,
+  quantity: number
+}
 
-export default Cart;
+CartSchema.method("addProduct", function (spec: ProductSpecType[] | ProductSpecType) {
+  const cart = this as ICartDocument;
+
+  if (Array.isArray(spec)) {
+    const newSpecs = spec.map(
+      (item) =>
+        new ProductSpecifcation({
+          product: new ObjectId(item.productId),
+          quantity: item.quantity,
+        })
+    );
+    cart.products?.push(...newSpecs);
+
+  } else {
+    const newSpec = new ProductSpecifcation({
+      product: new ObjectId(spec.productId),
+      quantity: spec.quantity,
+    });
+    cart.products?.push(newSpec);
+  }
+  return cart;
+});
+
+const ProductSpecifcation = model<IProductSpecifcation>(
+  "ProductSpecifcation",
+  ProductSpecifcationSchema
+);
+
+export default model<ICartDocument>("Cart", CartSchema, "carts");
