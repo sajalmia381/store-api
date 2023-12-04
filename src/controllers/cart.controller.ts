@@ -84,7 +84,7 @@ async function getByUserOrCreate(userId: string) {
 const userSpecificCartController = {
   /**
    * @description Get login user cart or empty array
-   * @Development
+   * @PublicApi
    */
   getByUser: async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?._id || ANONYMOUS_USER_ID;
@@ -210,7 +210,9 @@ const userSpecificCartController = {
 
   /**
    * @description Remove product from user cart
-   * @Development
+   * @param {string} ProductId - productId is required
+   * @param {string?} userId - userId /  req.user?._id
+   * @PublicApi
    */
   removeProductByUser: async (
     req: Request,
@@ -227,33 +229,24 @@ const userSpecificCartController = {
     }
     const { productId, userId } = req.body;
     const finalUserID = userId || req.user?._id || ANONYMOUS_USER_ID;
+
     try {
       if (!req.isSuperAdmin) {
         const cart = await Cart.findOne({
           user: finalUserID,
         })
-          .populate([
-            {
-              path: "user",
-              transform: (doc: UserDocument, _id: string) => ({
-                _id,
-                name: doc.name,
-                email: doc.email,
-              }),
-            },
-            {
-              path: "products.product",
-              transform: transformProduct,
-            },
-          ])
+          .populate(cartPopulate())
           .select("-__v");
         if (cart === null) {
           res.status(400).json({
             data: null,
             status: 400,
-            message: "Failed: Invalue userId",
+            message: userId
+              ? "Failed: User ID is invalid"
+              : "Cart is not found!",
           });
         }
+
         const newCart = {
           _id: cart?._id,
           user: cart?.user,
@@ -264,13 +257,12 @@ const userSpecificCartController = {
           ),
         };
 
-        res.status(202).json({
+        return res.status(202).json({
           data: newCart,
           status: 202,
           message: "Success, product removed",
         });
       }
-      console.log("productId", productId);
       let newCart = await Cart.findOneAndUpdate(
         { user: finalUserID },
         {
@@ -281,15 +273,6 @@ const userSpecificCartController = {
         .populate(cartPopulate())
         .select("-__v");
 
-      console.log("new Car", newCart);
-      if (newCart === null) {
-        return next(
-          CustomErrorHandler.badRequest(
-            "Failed: product is not found in your cart by admin!"
-          )
-        );
-      }
-
       res.status(202).json({
         data: newCart,
         status: 202,
@@ -298,8 +281,6 @@ const userSpecificCartController = {
     } catch (err) {
       return next(err);
     }
-
-    res.json({ status: 202, message: "product removed" });
   },
 };
 
@@ -432,7 +413,7 @@ const cartController = {
 
     try {
       if (!req?.isSuperAdmin) {
-        const _cart = await Cart.findById(req.params.id)
+        let _cart = await Cart.findById(req.params.id)
           .populate(cartPopulate())
           .select("-__v");
         if (_cart === null) {
@@ -442,12 +423,12 @@ const cartController = {
         }
 
         _cart.products = [];
-        let newCart = _cart.addProduct(req.body.products);
-        newCart = await newCart.populate(cartPopulate()).execPopulate();
+        _cart = _cart.addProducts(req.body.products);
+        _cart = await _cart.populate(cartPopulate()).execPopulate();
         const cart = {
           _id: _cart._id,
           user: _cart.user,
-          products: newCart.products,
+          products: _cart.products,
           createdAt: _cart.createdAt,
           updatedAt: _cart.updatedAt,
         };
