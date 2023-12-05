@@ -382,12 +382,12 @@ const cartController = {
   description: async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
     try {
-      const cart = await Cart.find({ _id: id })
+      const cart = await Cart.findOne({ _id: id })
         .populate(cartPopulate())
         .select("-__v");
 
       if (!cart) {
-        return next(CustomErrorHandler.notFound("Cart is not found!"));
+        return next(CustomErrorHandler.badRequest("Cart is not found!"));
       }
       res.status(200).json({
         status: 200,
@@ -486,17 +486,17 @@ const cartController = {
       if (!req?.isSuperAdmin) {
         const instance = await Cart.findOne({ _id: req.params.id });
         if (!instance) {
-          return next(CustomErrorHandler.notFound("Cart is not found!"));
+          return next(CustomErrorHandler.badRequest("Cart is not found!"));
         }
-        return res.json({ status: 202, message: "Success! cart deleted" });
+        return res.json({ status: 202, message: "Success! Cart deleted" });
       }
       const instance = await Cart.findOneAndDelete({ _id: req.params.id });
       if (!instance) {
-        return next(CustomErrorHandler.notFound("cart is not found!"));
+        return next(CustomErrorHandler.badRequest("Cart is not found!"));
       }
       return res.status(200).json({
         status: 200,
-        message: "Success! Product deleted by Admin",
+        message: "Success! Cart deleted",
       });
     } catch (err) {
       return next(CustomErrorHandler.serverError());
