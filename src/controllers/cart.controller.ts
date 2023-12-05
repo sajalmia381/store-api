@@ -3,7 +3,7 @@ import Joi from "joi";
 import { Cart } from "../models";
 import CustomErrorHandler from "../services/CustomErrorHandler";
 import { UserDocument } from "../models/user.model";
-import Product, { ProductDocument } from "../models/product.model";
+import { ProductDocument } from "../models/product.model";
 
 const ANONYMOUS_USER_ID = "612e4959345dcc333ac6cb35";
 
@@ -44,40 +44,6 @@ function cartPopulate() {
   ];
 }
 
-async function getByUserOrCreate(userId: string) {
-  try {
-    const cart = await Cart.findOne({ user: userId })
-      .populate([
-        {
-          path: "user",
-          transform: (doc: UserDocument, _id: string) => ({
-            _id,
-            name: doc.name,
-            email: doc.email,
-          }),
-        },
-        {
-          path: "products.product",
-          transform: transformProduct,
-        },
-      ])
-      .select("-__v");
-
-    if (cart === null) {
-      const instance = await new Cart({
-        user: userId,
-        products: [],
-      });
-      const newCard = await instance.save();
-      return newCard;
-    }
-    return cart;
-  } catch (err) {
-    console.log("Cart get or create err: ", err);
-    return null;
-  }
-}
-
 /**
  * @description Logged/Anomyous user specific controller
  */
@@ -89,13 +55,23 @@ const userSpecificCartController = {
   getByUser: async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?._id || ANONYMOUS_USER_ID;
     try {
-      const cart = await getByUserOrCreate(userId);
+      let cart = await Cart.findOne({ user: userId })
+        .populate(cartPopulate)
+        .select("-__v");
+
       if (cart === null) {
-        res.status(400).json({
-          data: null,
-          status: 400,
-          message: "Failed: Invalue userId",
+        cart = await Cart.create({
+          user: userId,
         });
+
+        if (cart === null) {
+          return res.status(400).json({
+            status: 400,
+            message: "Error, User ID is invalid.",
+            data: cart,
+          });
+        }
+        cart = await cart.populate(cartPopulate()).execPopulate();
       }
 
       res.json({
@@ -110,7 +86,8 @@ const userSpecificCartController = {
 
   /**
    * @description Update product quantity on user cart
-   * @Development
+   * @param {object} payload - {productId: string, quantity: number, userId?: staring}
+   * @PublicApi
    */
   updateByUser: async (req: Request, res: Response, next: NextFunction) => {
     const cartSchema = Joi.object({
@@ -127,82 +104,111 @@ const userSpecificCartController = {
     const finalUserId = userId || req.user?._id || ANONYMOUS_USER_ID;
 
     try {
-      const _cart = await getByUserOrCreate(finalUserId);
-      if (_cart === null) {
-        res.status(400).json({
-          data: null,
-          status: 400,
-          message: "Failed: Invalue userId",
-        });
-      }
-      if (!req.isSuperAdmin) {
-        const cart = new Cart({
-          user: finalUserId,
-          products: [
-            {
-              product: productId,
-              quantity,
-            },
-          ],
-        });
-        const product = await Product.findById(productId);
-        if (product === null) {
-          return res.json({
-            data: null,
-            status: 403,
-            message: "Failed, ProductId is invalid",
+      let cart = await Cart.findOne({ user: finalUserId });
+
+      // Handle If cart not exists with this user
+      if (cart === null) {
+        // Handle None admin
+        if (!req.isSuperAdmin) {
+          cart = await Cart.create({
+            user: finalUserId,
+            products: [],
+          });
+          cart.addProducts({ productId, quantity });
+        } else {
+          cart = await Cart.create({
+            user: finalUserId,
+            products: [
+              {
+                product: productId,
+                quantity,
+              },
+            ],
           });
         }
-        const __cart = {
-          _id: _cart?._id,
-          user: _cart?.user,
-          createdAt: _cart?.createdAt,
-          updatedAt: _cart?.updatedAt,
-          products: [
-            {
-              product: {
-                _id: productId,
-                title: product?.title,
-                slug: product?.slug,
-                price: product?.price,
-              },
-              quantity,
-            },
-          ],
-        };
-        return res.json({
-          data: __cart,
-          status: 201,
-          message: "Success, Product is added to cart",
+
+        if (cart === null) {
+          return res.status(400).json({
+            status: 400,
+            message: "Error, User ID is invalid.",
+            data: cart,
+          });
+        }
+
+        cart = await cart.populate(cartPopulate()).execPopulate();
+
+        return res.status(400).json({
+          data: cart,
+          status: 400,
+          message: "Success: New cart updated",
         });
       }
 
-      let newCart = await Cart.findOneAndUpdate(
-        { user: finalUserId, "products.product": productId },
+      if (!req.isSuperAdmin) {
+        if (cart.products && cart.products?.length > 0) {
+          let _productExists = false;
+          cart.products = cart.products.map((item) => {
+            if (item.product.toString() !== productId) return item;
+            _productExists = true;
+            return { product: productId, quantity };
+          });
+          if (!_productExists) {
+            cart.addProducts({ productId, quantity });
+          }
+        } else {
+          cart.addProducts({ productId, quantity });
+        }
+
+        await cart.populate(cartPopulate()).execPopulate();
+
+        return res.status(200).json({
+          data: cart,
+          status: 200,
+          message: "Success! product update",
+        });
+      }
+
+      let paylaod: any[] = [];
+
+      if (cart.products && cart.products?.length > 0) {
+        let _productExists = false;
+        paylaod = cart.products.map((item) => {
+          if (item.product?.toString() !== productId) return item;
+          _productExists = true;
+          return { product: productId, quantity };
+        });
+        if (!_productExists) {
+          paylaod.push({ product: productId, quantity });
+        }
+      } else {
+        paylaod.push({ product: productId, quantity });
+      }
+
+      await Cart.findOneAndUpdate(
+        { user: finalUserId },
         {
-          $set: { "products.$.quantity": quantity },
+          $set: {
+            products: paylaod,
+          },
         },
-        { new: true, useFindAndModify: false }
+        { new: true, useFindAndModify: false },
+        (err, doc) => {
+          if (err)
+            return res.status(400).json({
+              data: null,
+              status: 400,
+              message: err.message,
+            });
+
+          res.status(200).json({
+            data: doc,
+            status: 200,
+            message: "Success! product update by admin",
+          });
+        }
       )
         .populate(cartPopulate())
         .select("-__v");
-
-      // If product is not exists
-      if (newCart === null) {
-        newCart = await Cart.findOneAndUpdate(
-          { user: finalUserId },
-          { $addToSet: { products: [{ product: productId, quantity }] } },
-          { new: true, useFindAndModify: false }
-        )
-          .populate(cartPopulate())
-          .select("-__v");
-      }
-
-      res.status(201).json({
-        data: newCart,
-        status: 201,
-        message: "Success! product update by admin",
-      });
     } catch (err) {
       return next(err);
     }
@@ -295,7 +301,9 @@ const cartController = {
   list: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const carts = await Cart.find().populate(cartPopulate()).select("-__v");
-      res.json({ status: 200, message: "Success, Cart list", data: carts });
+      res
+        .status(200)
+        .json({ status: 200, message: "Success, Cart list", data: carts });
     } catch (err) {
       return next(err);
     }
@@ -381,7 +389,7 @@ const cartController = {
       if (!cart) {
         return next(CustomErrorHandler.notFound("Cart is not found!"));
       }
-      res.json({
+      res.status(200).json({
         status: 200,
         message: "Success, Cart description",
         data: cart,
@@ -413,13 +421,11 @@ const cartController = {
 
     try {
       if (!req?.isSuperAdmin) {
-        let _cart = await Cart.findById(req.params.id)
-          .populate(cartPopulate())
-          .select("-__v");
+        let _cart = await Cart.findById(req.params.id).select("-__v");
         if (_cart === null) {
           return res
-            .status(406)
-            .json({ status: 406, message: "Cart is not found!" });
+            .status(400)
+            .json({ status: 400, message: "Cart is not found!" });
         }
 
         _cart.products = [];
@@ -433,9 +439,9 @@ const cartController = {
           updatedAt: _cart.updatedAt,
         };
 
-        return res.status(201).json({
+        return res.status(200).json({
           data: cart,
-          status: 201,
+          status: 200,
           message: "Success! Cart updated",
         });
       }
@@ -455,13 +461,14 @@ const cartController = {
         {
           new: true,
           useFindAndModify: false,
+          // upsert: true, // Insert new if not exist
         }
       )
         .populate(cartPopulate())
         .select("-__v");
-      res.status(201).json({
+      res.status(200).json({
         data: cart,
-        status: 201,
+        status: 200,
         message: "Success! Cart updated by admin",
       });
     } catch (err: any) {
@@ -487,8 +494,8 @@ const cartController = {
       if (!instance) {
         return next(CustomErrorHandler.notFound("cart is not found!"));
       }
-      return res.json({
-        status: 202,
+      return res.status(200).json({
+        status: 200,
         message: "Success! Product deleted by Admin",
       });
     } catch (err) {

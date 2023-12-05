@@ -45,11 +45,11 @@ export const CartSchema = new Schema<ICartDocument>(
   { timestamps: true }
 );
 
-CartSchema.pre("save", async function name(next: HookNextFunction) {
-  let obj = this as ICartDocument;
-  console.log("pre save", obj);
-  return next();
-});
+// CartSchema.pre("save", async function name(next: HookNextFunction) {
+//   let obj = this as ICartDocument;
+//   console.log("pre save", obj);
+//   return next();
+// });
 
 // CartSchema.statics.getByUserOrCreate = async function (userId: string) {
 //   try {
