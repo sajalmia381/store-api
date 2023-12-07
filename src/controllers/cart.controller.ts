@@ -52,7 +52,7 @@ const userSpecificCartController = {
    * @description Get login user cart or empty array
    * @PublicApi
    */
-  getByUser: async (req: Request, res: Response, next: NextFunction) => {
+  gerRequestUserCart: async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?._id || ANONYMOUS_USER_ID;
     try {
       let cart = await Cart.findOne({ user: userId })
@@ -89,7 +89,7 @@ const userSpecificCartController = {
    * @param {object} payload - {productId: string, quantity: number, userId?: staring}
    * @PublicApi
    */
-  updateByUser: async (req: Request, res: Response, next: NextFunction) => {
+  updateRequestUserCart: async (req: Request, res: Response, next: NextFunction) => {
     const cartSchema = Joi.object({
       productId: Joi.string().required(),
       quantity: Joi.number().required(),
@@ -220,7 +220,7 @@ const userSpecificCartController = {
    * @param {string?} userId - userId /  req.user?._id
    * @PublicApi
    */
-  removeProductByUser: async (
+  removeProductRequestUserCart: async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -332,6 +332,7 @@ const cartController = {
     const { userId, products } = req.body;
 
     try {
+      console.log(req.user)
       if (!req?.isSuperAdmin) {
         const instance = new Cart({
           user: userId,
