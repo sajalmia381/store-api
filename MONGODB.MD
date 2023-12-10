@@ -45,3 +45,21 @@ mongodump --uri=mongodb://localhost:27017/store-api --out=./backup/db
 ```sh
 mongodump --uri=mongodb://localhost:27017/store-api-go --out=./backup/db
 ```
+
+<!-- Accees via tunnel -->
+```sh
+sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-3-7-68-106.ap-south-1.compute.amazonaws.com -L 27044:localhost:27044
+```
+
+<!-- Mongo Port forwarn via tunnel -->
+```sh
+sudo ssh -i ~/Desktop/pem/storeApi.pem ubuntu@ec2-3-7-68-106.ap-south-1.compute.amazonaws.com -L 27044:localhost:27017 -Nf
+mongodb://<USERNAME>:<PASSWORD>@localhost:27044/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false
+```
+
+<!-- SSH forward Ports -->
+```sh
+ps aux | grep ssh
+kill <id> // kill proccess
+kill -9 <id> // Alternative to kill process
+```
