@@ -81,13 +81,13 @@ const productController = {
 					.populate({ path: 'createdBy', select: '_id name role' })
 					.populate({ path: 'category', select: '_id name slug' })
 					.select('-__v -imageSource')
-				return res.json({ metadata, data: products, status: 200, message: "Success" });
+				return res.json({ metadata, data: products, status: 200, message: "Success! Prodcut List." });
 			}
 			const products = await Product.find(query)
 				.sort({ createdAt: sort })
 				.populate([{ path: 'createdBy', select: "_id name role" }, { path: 'category', select: '_id name slug' }])
 				.select('-__v -imageSource')
-			return res.json({ data: products, status: 200, message: "Success" });
+			return res.json({ data: products, status: 200, message: "Success! Prodcut List." });
 		} catch (err) {
 			console.log(err)
 			return next(err);
@@ -208,7 +208,7 @@ const productController = {
 			if (!product) {
 				return next(CustomErrorHandler.notFound('Product is not found!'))
 			}
-			return res.json({ status: 200, data: product, message: 'Success! Product found' })
+			return res.json({ status: 200, data: product, message: 'Success! Product Description' })
 		} catch (err) {
 			return next(err);
 		}
