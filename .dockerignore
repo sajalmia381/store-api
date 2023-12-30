@@ -6,12 +6,15 @@ node_modules
 .vscode
 .idea
 AWS.md
+DEPLOYMENT.md
 
+backup
 dump
 github_access_personal_token.txt
 .env
 docker-compose
 docker-compose.*
+prettier.config.js
 
 ssl_renew.sh
 secret.md

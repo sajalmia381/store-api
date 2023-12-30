@@ -5,13 +5,13 @@ services:
     container_name: store-api
     restart: always
     environment:
-      - APP_PORT=8000
-      - APP_HOST=localhost
-      - DB_URL=mongodb://root:gCrm4Q8V8e@database:27017/store-api?authSource=admin
-      - DEBUG_MODE=true
-      - NODE_ENV=development
-      - SECRET_KEY=!rad9TN`&B{!pg&Y($oTwOhYfEJ4{0sEBYtu]xqa2^8,Iyc^8HP[[XB,J$O)~BL
-      - REFRESH_KEY=hOS1|4NM.P#F^BA]JiIX^B0AS@JY+E20Zphjs2ER[}FMJXq3}1vH~iGrQPqtycv
+      - APP_PORT=${APP_PORT}
+      - APP_HOST=${APP_HOST}
+      - DB_URL=${APP_HOST}
+      - DEBUG_MODE=${DEBUG_MODE}
+      - NODE_ENV=${NODE_ENV}
+      - SECRET_KEY=${SECRET_KEY}
+      - REFRESH_KEY=${REFRESH_KEY}
     ports:
       - "8000:8000"
     expose:
@@ -25,8 +25,8 @@ services:
     container_name: store-mongo
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: gCrm4Q8V8e
+      MONGO_INITDB_ROOT_USERNAME: ""
+      MONGO_INITDB_ROOT_PASSWORD: ""
     image: mongo
     ports:
       - "27017:27017"
