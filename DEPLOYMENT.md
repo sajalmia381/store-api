@@ -18,13 +18,19 @@ npm run build
 ### 02. Build docker image for multipe build architect
 ```sh
 docker buildx use store-builder
-docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t storerestapi/store-api-node:1.0.0 -f Dockerfile2 --push .
-docker buildx imagetools create -t storerestapi/store-api-node:1.0.0 storerestapi/store-api-node:latest
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t storerestapi/store-api-node:3.0.0 -f Dockerfile2 --push .
+docker buildx imagetools create -t storerestapi/store-api-node:3.0.0 storerestapi/store-api-node:latest
 ```
 
 ## Up docker images
 ```sh
 docker-compose -f docker-compose.api.yml up -d
+docker-compose -f docker-compose.api.yml up --no-deps -d node-app
+```
+
+## Update service
+```sh
+docker pull storerestapi/store-api-node:latest
 docker-compose -f docker-compose.api.yml up --no-deps -d node-app
 ```
 
