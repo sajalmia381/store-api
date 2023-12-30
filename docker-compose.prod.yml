@@ -2,23 +2,40 @@ version: '3'
 services:
   node-app:
     image: storerestapi/store-api-node:latest
-    container_name: store-api-node
+    container_name: store-api
     restart: always
     environment:
       - APP_PORT=8000
       - APP_HOST=localhost
-      - DB_URL=mongodb://<USERNAME>:<PASSWORD>@database:27017/store-api?authSource=admin
+      - DB_URL=${APP_HOST}
       - DEBUG_MODE=true
-      - NODE_ENV=development
-      - SECRET_KEY=ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8
-      - REFRESH_KEY=ipfhUCFRZ4fce7GWaatUZMQbQ655sygRq0KUATOUX4VB1RFjaUtl6lfKmlP4AHg8
+      - NODE_ENV=production
+      - SECRET_KEY=${SECRET_KEY}
+      - REFRESH_KEY=${REFRESH_KEY}
     ports:
       - "8000:8000"
     expose:
       - 8000
     command: [ "node", "dist/app.js" ]
+    depends_on:
+      - database
     networks:
-      - store-api_store-network
+      - store-network
+  database:
+    container_name: store-mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: <USERNAME>
+      MONGO_INITDB_ROOT_PASSWORD: test
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-db:/data/db
+    networks:
+      - store-network
+volumes:
+  mongo-db:
 networks:
-  store-api_store-network:
+  store-network:
     external: true

@@ -1,9 +1,6 @@
 node_modules
 dump
 github_access_personal_token.txt
-backup
+backup/db/*
 
 dist
-
-docker-compose
-docker-compose.*
