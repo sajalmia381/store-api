@@ -1,17 +1,17 @@
 version: '3'
 services:
   node-app:
-    image: storerestapi/store-api-node:stable
+    image: storerestapi/store-api-node:latest
     container_name: store-api
     restart: always
     environment:
       - APP_PORT=8000
       - APP_HOST=localhost
-      - DB_URL=''
+      - DB_URL=mongodb://<USERNAME>:test@database:27017/store-api?authSource=admin
       - DEBUG_MODE=true
       - NODE_ENV=production
-      - SECRET_KEY=''
-      - REFRESH_KEY=''
+      - SECRET_KEY=${SECRET_KEY}
+      - REFRESH_KEY=${REFRESH_KEY}
     ports:
       - "8000:8000"
     expose:
@@ -25,8 +25,8 @@ services:
     container_name: store-mongo
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ''
-      MONGO_INITDB_ROOT_PASSWORD: ''
+      MONGO_INITDB_ROOT_USERNAME: <USERNAME>
+      MONGO_INITDB_ROOT_PASSWORD: test
     image: mongo
     ports:
       - "27017:27017"
