@@ -9,7 +9,7 @@ on:
       - "v*.*"
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/store-client
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/store-api-ndo
 
 jobs:
   Build-App:
