@@ -6,7 +6,7 @@ mongodb://<USERNAME>:<PASSWORD>@3.7.68.106:27017
 ## Dump server DB
 
 ```shell
-mongodump --host=storerestapi.com --port=27017 --username=<USERNAME> --authenticationDatabase=admin --out=/opt/backup/mongodump-2022-03-24
+mongodump --host=storerestapi.com --port=27017 --USERNAME=<USERNAME> --authenticationDatabase=admin --out=/opt/backup/mongodump-2022-03-24
 
 # NOt workable
 mongodump -db=<K8s-DEPLOYMENT-SERVICE> --host="mongodb://<USERNAME>:<PASSWORD>@<SERVER-IP>:<DB-EXPOSED-PORT>/?authSource=admin" --out=./backup/mongodump-202-10-24
@@ -62,4 +62,15 @@ mongodb://<USERNAME>:<PASSWORD>@localhost:27044/?authSource=admin&readPreference
 ps aux | grep ssh
 kill <id> // kill proccess
 kill -9 <id> // Alternative to kill process
+```
+
+<!-- Docker mongo restore and dump -->
+https://www.digitalocean.com/community/tutorials/how-to-secure-a-containerized-node-js-application-with-nginx-let-s-encrypt-and-docker-compose
+
+<!-- Mongo restore data from local machine database -->
+
+```
+docker exec -i store-mongo /usr/bin/mongodump --USERNAME <USERNAME> --password <PASSWORD> --authenticationDatabase admin --db store-api --out ./dump
+
+docker exec -i store-mongo /usr/bin/mongorestore --USERNAME <USERNAME> --password <PASSWORD> --authenticationDatabase admin --db store-api ./dump/store-api
 ```
