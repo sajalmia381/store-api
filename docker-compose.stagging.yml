@@ -29,7 +29,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: test
     image: mongo
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo-db:/data/db
     networks:
