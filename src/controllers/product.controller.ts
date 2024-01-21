@@ -108,7 +108,6 @@ const productController = {
 			return next(error);
 		}
 		const { title, price, category, description, image, imageSource, createdBy } = req.body;
-		console.log('createdBy', createdBy)
 		const instance = new Product({
 			title,
 			price,
@@ -176,7 +175,7 @@ const productController = {
 					"slug": req.body?.title ? slugify(req.body.title, { lower: true }) : _product.slug,
 					...req.body
 				}
-				return res.status(201).json({ data: product, status: 201, message: 'Success! product updated' })
+				return res.status(202).json({ data: product, status: 202, message: 'Success! product updated' })
 			}
 
 			const product = await Product.findOneAndUpdate(
@@ -193,7 +192,7 @@ const productController = {
 					useFindAndModify: false
 				}
 			);
-			res.status(201).json({ data: product, status: 201, message: 'Success! product updated by admin' })
+			res.status(202).json({ data: product, status: 202, message: 'Success! product updated by admin' })
 		} catch (err: any) {
 			return next(CustomErrorHandler.serverError(err))
 		}
@@ -220,7 +219,7 @@ const productController = {
 				if (!instance) {
 					return next(CustomErrorHandler.notFound('Product is not found!'))
 				}
-				return res.json({ status: 202, message: 'Success! Product deleted' })
+				return res.status(202).json({ status: 202, message: 'Success! Product deleted' })
 			}
 			const instance = await Product.findOneAndDelete({ slug: req.params.slug })
 			if (!instance) {
@@ -236,7 +235,7 @@ const productController = {
 			// 	});
 			// }
 			await Category.updateOne({ '_id': instance.category }, { $pull: { products: instance._id } });
-			return res.json({ status: 202, message: 'Success! Product deleted by Admin' });
+			return res.status(202).json({ status: 202, message: 'Success! Product deleted by Admin' });
 		} catch (err) {
 			return next(CustomErrorHandler.serverError())
 		}

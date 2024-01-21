@@ -4,3 +4,4 @@ github_access_personal_token.txt
 backup/db/*
 
 dist
+coverage
