@@ -42,7 +42,7 @@ jobs:
         path: |
           dist
           Dockerfile2
-          package.json
+          package*.json
 
   Container-Build-And-Push:
     runs-on: ubuntu-latest
