@@ -24,10 +24,9 @@ const categoryController = {
       parent: req.body.parent
     });
     try {
-      console.log('slug', obj.slug)
       if(req?.isSuperAdmin) {
         const category = await obj.save();
-        return res.json({data: category, status: 201, message: 'Success! Category created by admin'})
+        return res.status(201).json({data: category, status: 201, message: 'Success! Category created by admin'})
       }
       const category = {
         _id: obj._id,
@@ -35,7 +34,7 @@ const categoryController = {
         slug: slugify(obj.name, { lower: true }),
         parent: obj.parent
       }
-      return res.json({data: category, status: 201, message: 'Success! Category created'})
+      return res.status(201).json({data: category, status: 201, message: 'Success! Category created'})
     } catch(err) {
       return next(CustomErrorHandler.serverError())
     }
@@ -46,7 +45,7 @@ const categoryController = {
         .findOne({slug: req.params.slug})
         .populate({ path: 'products', select: '-__v -category'})
         .select('-__v');
-      if(!category) {
+      if (!category) {
         return next(CustomErrorHandler.notFound('Category is not found!'))
       }
       return res.json({ data: category, status: 200, message: "Success! Category found" });
@@ -65,16 +64,19 @@ const categoryController = {
     };
     try {
       if(req?.isSuperAdmin) {
-        const data = await Category.findOneAndUpdate({_id: req.params.id}, payload, { new: true, useFindAndModify: false });
-        return res.status(201).json({status: 201, message: 'Success! User updated by admin', data })
+        const data = await Category.findOneAndUpdate({slug: req.params.slug}, payload, { new: true, useFindAndModify: false });
+        return res.status(202).json({status: 202, message: 'Success! User updated by admin', data })
       }
-      const category = await Category.findOne({ _id: req.params.id }) as CategoryDocument; 
+      const category = await Category.findOne({ slug: req.params.slug }) as CategoryDocument; 
       const newCategory = {
+        _id: category._id,
         name: category.name,
         slug: category.slug,
-        product: category?.products
+        product: category?.products,
+        parent: category?.parent,
+        ...req.body
       }
-      return res.json({data: category, status: 201, message: 'Success! Category updated'})
+      return res.status(202).json({data: newCategory, status: 202, message: 'Success! Category updated'})
     } catch(err) {
       return next(CustomErrorHandler.serverError())
     }
@@ -86,13 +88,13 @@ const categoryController = {
         if (!instance) {
           return next(CustomErrorHandler.notFound('Category is not found!'))
         }
-        return res.json({status: 202, message: 'Success! Category deleted by admin'})
+        return res.status(202).json({status: 202, message: 'Success! Category deleted by admin'})
       }
       const instance = await Category.find({slug: req.params.slug});
       if (!instance) {
         return next(CustomErrorHandler.notFound('Category is not found!'))
       }
-      return res.json({status: 202, message: 'Success! Category deleted'})
+      return res.status(202).json({status: 202, message: 'Success! Category deleted'})
      } catch (err) {
        return next(CustomErrorHandler.notFound('Category is not found!'))
      }

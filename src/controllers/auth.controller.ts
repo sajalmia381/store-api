@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { JwtPayload } from 'jsonwebtoken';
-import Utils from '../services/Utils';
 import { REFRESH_KEY } from '../config';
 import { RefreshToken, User } from '../models';
 import CustomErrorHandler from '../services/CustomErrorHandler';
@@ -46,11 +45,11 @@ const authController = {
       const tokenValidity: any = req.query?.duration;
       const refreshTokenValidity: any = req.query?.refreshDuration
       const [access_token, refresh_token] = JwtService.generateJWTTokens(payload, tokenValidity, refreshTokenValidity);
-      if(user?.role === "ROLE_SUPER_ADMIN") {
+      if (user?.role === "ROLE_SUPER_ADMIN") {
         await RefreshToken.create({ token: refresh_token });
       }
       user.updateLogin();
-      res.json({data: { access_token, refresh_token }, message: 'Sign in success', status: 200 })
+      res.json({ data: { access_token, refresh_token }, message: 'Sign in success', status: 200 })
       res.end();
     } catch (err) {
       return next(err)

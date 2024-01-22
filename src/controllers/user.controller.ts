@@ -1,10 +1,8 @@
-import { Request, Response, NextFunction, json } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
-import { REFRESH_KEY } from '../config';
 import { User } from '../models';
 import { UserDocument } from '../models/user.model';
 import CustomErrorHandler from '../services/CustomErrorHandler';
-import JwtService from '../services/JwtService';
 
 const userController = {
   list: async (req: Request, res: Response, next: NextFunction) => {
@@ -24,7 +22,7 @@ const userController = {
     const userSchema = Joi.object({
       name: Joi.string().required(),
       email: Joi.string().email().required(),
-      number: Joi.string(),
+      number: Joi.number(),
       password: Joi.string().min(6).required(),
       password_repeat: Joi.ref('password')
     })
@@ -38,7 +36,7 @@ const userController = {
     // console.log('Checking user is exists')
     try {
       const isExists: boolean = await User.exists({email: formData.email});
-      if(isExists) {
+      if (isExists) {
         return next(CustomErrorHandler.alreadyExists('This email is taken'))
       }
     } catch (err) {
@@ -55,17 +53,11 @@ const userController = {
     }
     const user = new User(userPayload);
     try {
-      if(req?.isSuperAdmin) {
+      if (req?.isSuperAdmin) {
         await user.save();
+        return res.status(201).json({status: 201, message: 'Success! User created by admin', data: user})
       }
-      const tokenPayload = {
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
-      const access_token = JwtService.sign(tokenPayload);
-      const refresh_token = JwtService.sign(tokenPayload, '1y', REFRESH_KEY);
-      res.status(201).json({status: 201, message: 'User created', access_token, refresh_token})
+      res.status(201).json({status: 201, message: 'Success! User created', data: user})
     } catch (err: any) {
       return next(CustomErrorHandler.serverError(err.message))
     }
@@ -83,7 +75,7 @@ const userController = {
       if (!user) {
         return next(CustomErrorHandler.notFound())
       }
-      return res.json({ status: 200, message: 'Success', data: user })
+      return res.json({ status: 200, message: 'Success: User description.', data: user })
     } catch (err) {
       return next(CustomErrorHandler.notFound())
     }
@@ -102,7 +94,7 @@ const userController = {
     // Check user exists
     // console.log('Checking user is exists')
     try {
-      const isExists: boolean = await User.exists({email: req.params.id});
+      const isExists: boolean = await User.exists({_id: req.params.id});
       if(!isExists) {
         return res.status(404).json({status: 404, message: 'User is not found!'})
       }
@@ -119,7 +111,7 @@ const userController = {
     try {
       if(req?.isSuperAdmin) {
         const data = await User.findOneAndUpdate({_id: req.params.id}, userPayload, { new: true, useFindAndModify: false });
-        return res.status(201).json({status: 201, message: 'Success! User updated by admin', data })
+        return res.status(202).json({status: 202, message: 'Success! User updated by admin', data })
       }
       const user = await User.findOne({ _id: req.params.id }) as UserDocument;
       const data = {
@@ -129,7 +121,7 @@ const userController = {
         role: user.role,
         ...userPayload
       }
-      return res.status(201).json({status: 201, message: 'Success! User updated', data})
+      return res.status(202).json({status: 202, message: 'Success! User updated', data})
     } catch (err: any) {
       return next(CustomErrorHandler.serverError(err?.message))
     }
@@ -141,13 +133,13 @@ const userController = {
       if (!instance) {
         return next(CustomErrorHandler.notFound('User is not found!'))
       }
-      return res.json({status: 202, message: 'Success! User deleted by admin'})
+      return res.status(202).json({status: 202, message: 'Success! User deleted by admin'})
     }
     const instance = await User.find({_id: req.params.id})
     if (!instance) {
       return next(CustomErrorHandler.notFound('User is not found!'))
     }
-    return res.json({status: 202, message: 'Success! User deleted'})
+    return res.status(202).json({status: 202, message: 'Success! User deleted'})
    } catch (err: any) {
      return next(CustomErrorHandler.serverError(err?.message))
    }
