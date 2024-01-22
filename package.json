@@ -7,7 +7,7 @@
     "start": "node src/app.js",
     "build": "tsc -p .",
     "dev": "nodemon --config nodemon.json src/app.ts",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
