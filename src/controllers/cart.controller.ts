@@ -320,7 +320,6 @@ const cartController = {
     const { userId, products } = req.body;
 
     try {
-      console.log(req.user);
       if (!req?.isSuperAdmin) {
         const instance = new Cart({
           user: userId,

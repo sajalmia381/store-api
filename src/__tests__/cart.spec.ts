@@ -4,7 +4,26 @@ import mongoose from 'mongoose';
 import createServer from '../server';
 import Utils from './utils';
 
+const categoryId = mongoose.Types.ObjectId().toString();
+const userId = mongoose.Types.ObjectId().toString();
+
+const userPayload = {
+  name: 'Ron Bin Nawaz',
+  email: 'ron@gmail.com',
+  password: 'pass12345',
+  password_repeat: 'pass12345'
+};
+
+const productPayload = {
+  title: 'Men Boxer Sneakers For Men  (Black)',
+  price: 799,
+  description: 'Lorem Ipsum is simply dummy text of the printing',
+  category: categoryId,
+  createdBy: userId
+};
+
 const app = createServer();
+
 
 describe('cart', () => {
   beforeAll(async () => {
@@ -25,54 +44,57 @@ describe('cart', () => {
     });
   });
 
-  // describe('testing cart create', () => {
-  //   describe('invalid cart payload', () => {
-  //     it('should return 422', async () => {
-  //       const { status } = await supertest(app).post('/carts');
-  //       expect(status).toBe(422);
-  //     });
-  //   });
-  //   describe('fake cart creation', () => {
-  //     it('should return 201', async () => {
-  //       const { status, body } = await supertest(app).post('/carts').send(cartPayload);
-  //       expect(status).toBe(201);
-  //       // console.log('body', body);
-  //       expect(body).toEqual({
-  //         status: 201,
-  //         message: 'Success! cart created',
-  //         data: {
-  //           _id: expect.any(String),
-  //           completed: false,
-  //           createdBy: expect.any(String),
-  //           description: 'Some description',
-  //           status: 'cart',
-  //           title: 'Conduct code reviews regularly'
-  //         }
-  //       });
-  //     });
-  //   });
-  //   describe('super admin cart creation', () => {
-  //     it('should return 201', async () => {
-  //       const { status, body } = await supertest(app).post('/carts').send(cartPayload).set('Authorization', `Bearer ${Utils.access_token}`);
-  //       expect(status).toBe(201);
-  //       expect(body).toEqual({
-  //         status: 201,
-  //         message: 'Success! cart created by admin',
-  //         data: {
-  //           __v: expect.any(Number),
-  //           _id: expect.any(String),
-  //           completed: false,
-  //           createdBy: expect.any(String),
-  //           description: 'Some description',
-  //           status: 'cart',
-  //           title: 'Conduct code reviews regularly',
-  //           createdAt: expect.any(String),
-  //           updatedAt: expect.any(String)
-  //         }
-  //       });
-  //     });
-  //   });
-  // });
+  describe('testing cart create', () => {
+    describe('invalid cart payload', () => {
+      it('should return 422', async () => {
+        const { status } = await supertest(app).post('/carts');
+        expect(status).toBe(422);
+      });
+    });
+    // describe('fake cart creation', () => {
+    //   it('should return 201', async () => {
+    //     const { status, body } = await supertest(app)
+    //       .post('/carts')
+    //       .send({
+    //         userId: mongoose.Types.ObjectId().toString(),
+    //         products: [
+    //           {
+    //             productId: mongoose.Types.ObjectId().toString(),
+    //             quantity: 5
+    //           },
+    //           {
+    //             productId: mongoose.Types.ObjectId().toString(),
+    //             quantity: 7
+    //           }
+    //         ]
+    //       });
+    //     expect(status).toBe(201);
+    //     console.log('body', body);
+    //     expect(body).toEqual({});
+    //   });
+    // });
+    // describe('super admin cart creation', () => {
+    //   it('should return 201', async () => {
+    //     const { status, body } = await supertest(app).post('/carts').send(cartPayload).set('Authorization', `Bearer ${Utils.access_token}`);
+    //     expect(status).toBe(201);
+    //     expect(body).toEqual({
+    //       status: 201,
+    //       message: 'Success! cart created by admin',
+    //       data: {
+    //         __v: expect.any(Number),
+    //         _id: expect.any(String),
+    //         completed: false,
+    //         createdBy: expect.any(String),
+    //         description: 'Some description',
+    //         status: 'cart',
+    //         title: 'Conduct code reviews regularly',
+    //         createdAt: expect.any(String),
+    //         updatedAt: expect.any(String)
+    //       }
+    //     });
+    //   });
+    // });
+  });
 
   // describe('testing single cart', () => {
   //   describe('test get cart', () => {
