@@ -21,7 +21,7 @@ const UpdateProductPayload = {
   title: 'Men Boxer Sneakers For Men update',
   price: 999,
   description: 'update',
-  category: categoryId,
+  category: categoryId
 };
 
 describe('product', () => {
@@ -49,7 +49,7 @@ describe('product', () => {
         data: [],
         status: 200,
         message: 'Success! Prodcut List.'
-      })
+      });
     });
   });
 
@@ -68,7 +68,10 @@ describe('product', () => {
     });
     describe('superadmin product creation', () => {
       it('should return 201', async () => {
-        const { status, body } = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.access_token}`);
+        const { status, body } = await supertest(app)
+          .post('/products')
+          .send(productPayload)
+          .set('Authorization', `Bearer ${Utils.access_token}`);
         expect(status).toBe(201);
         expect(body).toEqual({
           data: {
@@ -86,7 +89,7 @@ describe('product', () => {
           },
           status: 201,
           message: 'Success! product created by admin'
-        })
+        });
       });
     });
   });
@@ -96,7 +99,7 @@ describe('product', () => {
       expect(status).toBe(404);
     });
     it('should return 200', async () => {
-      const { body } = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.access_token}`);
+      const { body } = await supertest(app).post('/products').send(productPayload).set('Authorization', `Bearer ${Utils.access_token}`);
       const { status } = await supertest(app).get(`/products/${body.data.slug}`);
       expect(status).toBe(200);
     });
@@ -121,13 +124,16 @@ describe('product', () => {
           },
           status: 202,
           message: 'Success! product updated'
-        })
+        });
       });
-    })
+    });
     describe('super admin product update', () => {
       it('should return 202', async () => {
-        const res = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.access_token}`);
-        const { status, body } = await supertest(app).put(`/products/${res.body.data.slug}`).send(UpdateProductPayload).set("Authorization", `Bearer ${Utils.access_token}`);
+        const res = await supertest(app).post('/products').send(productPayload).set('Authorization', `Bearer ${Utils.access_token}`);
+        const { status, body } = await supertest(app)
+          .put(`/products/${res.body.data.slug}`)
+          .send(UpdateProductPayload)
+          .set('Authorization', `Bearer ${Utils.access_token}`);
         expect(status).toBe(202);
         expect(body).toEqual({
           data: {
@@ -141,13 +147,13 @@ describe('product', () => {
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
             slug: res.body.data.slug,
-            __v: expect.any(Number),
+            __v: expect.any(Number)
           },
           status: 202,
           message: 'Success! product updated by admin'
-        })
+        });
       });
-    })
+    });
   });
 
   describe('testing product destroy', () => {
@@ -157,13 +163,15 @@ describe('product', () => {
         const { status } = await supertest(app).delete(`/products/${res.body.data.slug}`);
         expect(status).toBe(202);
       });
-    })
+    });
     describe('super admin product destroy', () => {
       it('should return 202', async () => {
-        const res = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.access_token}`);
-        const { status } = await supertest(app).delete(`/products/${res.body.data.slug}`).set("Authorization", `Bearer ${Utils.access_token}`);
+        const res = await supertest(app).post('/products').send(productPayload).set('Authorization', `Bearer ${Utils.access_token}`);
+        const { status } = await supertest(app)
+          .delete(`/products/${res.body.data.slug}`)
+          .set('Authorization', `Bearer ${Utils.access_token}`);
         expect(status).toBe(202);
       });
-    })
+    });
   });
 });
