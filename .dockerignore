@@ -16,6 +16,9 @@ docker-compose
 docker-compose.*
 prettier.config.js
 
+__tests__
+jest.config.js
+
 ssl_renew.sh
 secret.md
 nginx_signing.key

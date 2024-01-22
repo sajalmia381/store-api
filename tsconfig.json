@@ -6,8 +6,8 @@
   },
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
-    
-    "target": "es2016",
+
+    "target": "es5",
     "module": "commonjs",
     "rootDir": "./src",
     "moduleResolution": "node",
