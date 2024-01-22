@@ -62,7 +62,7 @@ describe('Category', () => {
     });
     describe('superadmin category creation', () => {
       it('should return 201', async () => {
-        const { status, body } = await supertest(app).post('/categories').send(categoryPayload).set("Authorization", `Bearer ${Utils.token}`);
+        const { status, body } = await supertest(app).post('/categories').send(categoryPayload).set("Authorization", `Bearer ${Utils.access_token}`);
         expect(status).toBe(201);
         expect(body).toEqual({
           data: {
@@ -84,7 +84,7 @@ describe('Category', () => {
       expect(status).toBe(404);
     });
     it('should return 200', async () => {
-      const { body } = await supertest(app).post('/categories').send(categoryPayload).set("Authorization", `Bearer ${Utils.token}`);
+      const { body } = await supertest(app).post('/categories').send(categoryPayload).set("Authorization", `Bearer ${Utils.access_token}`);
       const { status } = await supertest(app).get(`/categories/${body.data.slug}`);
       expect(status).toBe(200);
     });
@@ -109,8 +109,8 @@ describe('Category', () => {
     })
     describe('super admin category update', () => {
       it('should return 202', async () => {
-        const res = await supertest(app).post('/categories').send({name: "Mens cloths"}).set("Authorization", `Bearer ${Utils.token}`);
-        const { status, body } = await supertest(app).put(`/categories/${res.body.data.slug}`).send({name: "Mens cloths update"}).set("Authorization", `Bearer ${Utils.token}`);
+        const res = await supertest(app).post('/categories').send({name: "Mens cloths"}).set("Authorization", `Bearer ${Utils.access_token}`);
+        const { status, body } = await supertest(app).put(`/categories/${res.body.data.slug}`).send({name: "Mens cloths update"}).set("Authorization", `Bearer ${Utils.access_token}`);
         expect(status).toBe(202);
         expect(body).toEqual({
           status: 202,
@@ -138,8 +138,8 @@ describe('Category', () => {
     })
     describe('super admin category destroy', () => {
       it('should return 202', async () => {
-        const res = await supertest(app).post('/categories').send(categoryPayload).set("Authorization", `Bearer ${Utils.token}`);
-        const { status } = await supertest(app).delete(`/categories/${res.body.data.slug}`).set("Authorization", `Bearer ${Utils.token}`);
+        const res = await supertest(app).post('/categories').send(categoryPayload).set("Authorization", `Bearer ${Utils.access_token}`);
+        const { status } = await supertest(app).delete(`/categories/${res.body.data.slug}`).set("Authorization", `Bearer ${Utils.access_token}`);
         expect(status).toBe(202);
       });
     })

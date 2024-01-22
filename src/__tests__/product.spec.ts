@@ -68,7 +68,7 @@ describe('product', () => {
     });
     describe('superadmin product creation', () => {
       it('should return 201', async () => {
-        const { status, body } = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.token}`);
+        const { status, body } = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.access_token}`);
         expect(status).toBe(201);
         expect(body).toEqual({
           data: {
@@ -96,7 +96,7 @@ describe('product', () => {
       expect(status).toBe(404);
     });
     it('should return 200', async () => {
-      const { body } = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.token}`);
+      const { body } = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.access_token}`);
       const { status } = await supertest(app).get(`/products/${body.data.slug}`);
       expect(status).toBe(200);
     });
@@ -126,8 +126,8 @@ describe('product', () => {
     })
     describe('super admin product update', () => {
       it('should return 202', async () => {
-        const res = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.token}`);
-        const { status, body } = await supertest(app).put(`/products/${res.body.data.slug}`).send(UpdateProductPayload).set("Authorization", `Bearer ${Utils.token}`);
+        const res = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.access_token}`);
+        const { status, body } = await supertest(app).put(`/products/${res.body.data.slug}`).send(UpdateProductPayload).set("Authorization", `Bearer ${Utils.access_token}`);
         expect(status).toBe(202);
         expect(body).toEqual({
           data: {
@@ -160,8 +160,8 @@ describe('product', () => {
     })
     describe('super admin product destroy', () => {
       it('should return 202', async () => {
-        const res = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.token}`);
-        const { status } = await supertest(app).delete(`/products/${res.body.data.slug}`).set("Authorization", `Bearer ${Utils.token}`);
+        const res = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${Utils.access_token}`);
+        const { status } = await supertest(app).delete(`/products/${res.body.data.slug}`).set("Authorization", `Bearer ${Utils.access_token}`);
         expect(status).toBe(202);
       });
     })
