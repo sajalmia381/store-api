@@ -23,19 +23,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
-    - name: Install Packages
+    - name: Install packages
       run: npm install
 
-    - name: Build Typescript App
+    - name: Build typescript app
       run: npm run build
     
-    - name: Upload Artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: Bundle
@@ -60,28 +60,28 @@ jobs:
 
       - # Add support for more platforms with QEMU (optional)
         # https://github.com/docker/setup-qemu-action
-        name: Set UP QEMU
+        name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Set UP Docker Buildx
+      - name: Set up docker buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login To Docker Hub
+      - name: Login to docker hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      - name: Display Structure of Downloaded Files
+      - name: Display structure of downloaded files
         run: ls -R
 
-      - name: Download Artifact
+      - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: Bundle
       
-      - name: Docker Build And Push
+      - name: Docker build and push
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
@@ -92,7 +92,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Push To Stable Tag
+      - name: Push to stable tag
         if: (github.event_name == 'push' && contains(github.ref, '/tags/v'))
         run: |
           echo ${{ env.IMAGE_NAME }}:${{env.DOCKER_METADATA_OUTPUT_VERSION}}
