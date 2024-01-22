@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import createServer from '../server';
+import createServer from '../src/server';
 import Utils from './utils';
 
 const app = createServer();
@@ -106,7 +106,7 @@ describe('todo', () => {
           status: 'IN_PROGRESS',
           description: 'Update description'
         });
-        console.log('body', body);
+        // console.log('body', body);
         expect(status).toBe(202);
         expect(body).toEqual({
           data: {
@@ -133,7 +133,7 @@ describe('todo', () => {
             description: 'Update description'
           })
           .set('Authorization', `Bearer ${Utils.access_token}`);
-        console.log('body', body);
+        // console.log('body', body);
         expect(status).toBe(202);
         expect(body).toEqual({
           status: 202,

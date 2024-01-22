@@ -1,5 +1,5 @@
-import { REFRESH_KEY } from '../config';
-import JwtService from '../services/JwtService';
+import { REFRESH_KEY } from '../src/config';
+import JwtService from '../src/services/JwtService';
 
 class Utils {
   static superAdminUserPayload = {

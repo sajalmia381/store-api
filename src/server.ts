@@ -1,9 +1,9 @@
 import cors from 'cors';
 import express from 'express';
 import path from 'path';
-import errorHandler from '../middlewares/errorHandler';
-import loggerMiddleware from '../middlewares/logger';
-import routes from '../routes';
+import errorHandler from './middlewares/errorHandler';
+import loggerMiddleware from './middlewares/logger';
+import routes from './routes';
 
 function createServer() {
   const app = express();

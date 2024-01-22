@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Todo, isCompleteStatus } from "../models";
 import Joi from "joi";
 import CustomErrorHandler from "../services/CustomErrorHandler";
-import { TodoDocument } from "src/models/todo.model";
+import { TodoDocument } from "../models/todo.model";
 
 const todoController = {
   list: async (req: Request, res: Response, next: NextFunction) => {
