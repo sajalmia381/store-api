@@ -35,10 +35,10 @@ const todoController = {
     try {
       if (req.isSuperAdmin) {
         const todo = await obj.save();
-        return res.json({
+        return res.status(201).json({
           status: 201,
           data: todo,
-          message: "Success! Todo created by Admin",
+          message: "Success! Todo created by admin",
         });
       }
       // Fake Response
@@ -46,9 +46,11 @@ const todoController = {
         _id: obj._id,
         title: obj.title,
         completed: obj.completed,
+        status: obj.status,
+        description: obj.description,
         createdBy: req?.user?._id || "612e4959345dcc333ac6cb35", // Sajalmia
       };
-      return res.json({
+      return res.status(201).json({
         data: todo,
         status: 201,
         message: "Success! Todo created",
@@ -81,10 +83,10 @@ const todoController = {
           payload,
           { new: true, useFindAndModify: true }
         );
-        return res.json({
-          status: 201,
+        return res.status(202).json({
+          status: 202,
           data: todo,
-          message: "Success! Todo created by Admin",
+          message: "Success! Todo update by Admin",
         });
       }
       // Fake Response
@@ -100,12 +102,12 @@ const todoController = {
 					"title": _todo.title,
 					"status": _todo.status,
 					"description": _todo.description,
-          "completed": isCompleteStatus(status) ? true : _todo.status,
+          "completed": isCompleteStatus(status) ? true : _todo.completed,
 					"createdAt": _todo.createdAt,
           "updatedAt": _todo.updatedAt,
 					...req.body
 				}
-				return res.status(201).json({ data: todo, status: 201, message: 'Success! todo updated' })
+				return res.status(202).json({ data: todo, status: 202, message: 'Success! todo updated' })
 			}
     } catch (err) {
       return next(err);
@@ -118,13 +120,13 @@ const todoController = {
 				if (!instance) {
 					return next(CustomErrorHandler.notFound('Todo is not found!'))
 				}
-				return res.json({ status: 202, message: 'Success! Todo deleted' })
+				return res.status(202).json({ status: 202, message: 'Success! Todo deleted' })
 			}
 			const instance = await Todo.findOneAndDelete({ _id: req.params.id })
 			if (!instance) {
 				return next(CustomErrorHandler.notFound('Todo is not found!'))
 			}
-			return res.json({ status: 202, message: 'Success! Todo deleted by Admin' });
+			return res.status(202).json({ status: 202, message: 'Success! Todo deleted by Admin' });
 		} catch (err) {
 			return next(CustomErrorHandler.serverError())
 		}
