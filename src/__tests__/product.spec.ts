@@ -49,7 +49,6 @@ describe('product', () => {
     });
     it('get pagination product list', async () => {
       const { status, body } = await supertest(app).get('/products?limit=10&page=1');
-      console.log(body)
       expect(status).toBe(200);
       expect(body).toEqual({
         metadata: { currentPage: 1, totalProducts: 0, totalPages: 1 },
@@ -172,7 +171,7 @@ describe('product', () => {
       it('should return 202', async () => {
         const token = JwtService.sign(superAdminJWTPayload)
         const res = await supertest(app).post('/products').send(productPayload).set("Authorization", `Bearer ${token}`);
-        const { status, body } = await supertest(app).delete(`/products/${res.body.data.slug}`).send(UpdateProductPayload).set("Authorization", `Bearer ${token}`);
+        const { status } = await supertest(app).delete(`/products/${res.body.data.slug}`).set("Authorization", `Bearer ${token}`);
         expect(status).toBe(202);
       });
     })
