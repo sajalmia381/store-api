@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import Joi from "joi";
-import { Cart } from "../models";
-import CustomErrorHandler from "../services/CustomErrorHandler";
-import { UserDocument } from "../models/user.model";
-import { ProductDocument } from "../models/product.model";
+import { NextFunction, Request, Response } from 'express';
+import Joi from 'joi';
+import { Cart } from '../models';
+import CustomErrorHandler from '../services/CustomErrorHandler';
+import { UserDocument } from '../models/user.model';
+import { ProductDocument } from '../models/product.model';
 
-const ANONYMOUS_USER_ID = "612e4959345dcc333ac6cb35";
+const ANONYMOUS_USER_ID = '612e4959345dcc333ac6cb35';
 
 /**
  * @description Populate Product data transform
@@ -18,7 +18,7 @@ function transformProduct(doc: ProductDocument, _id: string) {
     _id: doc._id,
     title: doc.title,
     slug: doc.slug,
-    price: doc.price,
+    price: doc.price
   };
 }
 
@@ -30,17 +30,17 @@ function transformProduct(doc: ProductDocument, _id: string) {
 function cartPopulate() {
   return [
     {
-      path: "user",
+      path: 'user',
       transform: (doc: UserDocument, _id: string) => ({
         _id: doc._id,
         name: doc.name,
-        email: doc.email,
-      }),
+        email: doc.email
+      })
     },
     {
-      path: "products.product",
-      transform: transformProduct,
-    },
+      path: 'products.product',
+      transform: transformProduct
+    }
   ];
 }
 
@@ -55,20 +55,18 @@ const userSpecificCartController = {
   gerRequestUserCart: async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?._id || ANONYMOUS_USER_ID;
     try {
-      let cart = await Cart.findOne({ user: userId })
-        .populate(cartPopulate)
-        .select("-__v");
+      let cart = await Cart.findOne({ user: userId }).populate(cartPopulate).select('-__v');
 
       if (cart === null) {
         cart = await Cart.create({
-          user: userId,
+          user: userId
         });
 
         if (cart === null) {
           return res.status(400).json({
             status: 400,
-            message: "Error, User ID is invalid.",
-            data: cart,
+            message: 'Error, User ID is invalid.',
+            data: cart
           });
         }
         cart = await cart.populate(cartPopulate()).execPopulate();
@@ -76,8 +74,8 @@ const userSpecificCartController = {
 
       res.json({
         status: 200,
-        message: "Success, Cart description",
-        data: cart,
+        message: 'Success, Cart description',
+        data: cart
       });
     } catch (err) {
       return next(err);
@@ -93,7 +91,7 @@ const userSpecificCartController = {
     const cartSchema = Joi.object({
       productId: Joi.string().required(),
       quantity: Joi.number().required(),
-      userId: Joi.string(),
+      userId: Joi.string()
     });
     const { error } = cartSchema.validate(req.body);
     if (error) {
@@ -112,7 +110,7 @@ const userSpecificCartController = {
         if (!req.isSuperAdmin) {
           cart = await Cart.create({
             user: finalUserId,
-            products: [],
+            products: []
           });
           cart.addProducts({ productId, quantity });
         } else {
@@ -121,17 +119,17 @@ const userSpecificCartController = {
             products: [
               {
                 product: productId,
-                quantity,
-              },
-            ],
+                quantity
+              }
+            ]
           });
         }
 
         if (cart === null) {
           return res.status(400).json({
             status: 400,
-            message: "Error, User ID is invalid.",
-            data: cart,
+            message: 'Error, User ID is invalid.',
+            data: cart
           });
         }
 
@@ -140,14 +138,14 @@ const userSpecificCartController = {
         return res.status(400).json({
           data: cart,
           status: 400,
-          message: "Success: New cart updated",
+          message: 'Success: New cart updated'
         });
       }
 
       if (!req.isSuperAdmin) {
         if (cart.products && cart.products?.length > 0) {
           let _productExists = false;
-          cart.products = cart.products.map((item) => {
+          cart.products = cart.products.map(item => {
             if (item.product.toString() !== productId) return item;
             _productExists = true;
             return { product: productId, quantity };
@@ -164,7 +162,7 @@ const userSpecificCartController = {
         return res.status(200).json({
           data: cart,
           status: 200,
-          message: "Success! product update",
+          message: 'Success! product update'
         });
       }
 
@@ -172,7 +170,7 @@ const userSpecificCartController = {
 
       if (cart.products && cart.products?.length > 0) {
         let _productExists = false;
-        paylaod = cart.products.map((item) => {
+        paylaod = cart.products.map(item => {
           if (item.product?.toString() !== productId) return item;
           _productExists = true;
           return { product: productId, quantity };
@@ -188,8 +186,8 @@ const userSpecificCartController = {
         { user: finalUserId },
         {
           $set: {
-            products: paylaod,
-          },
+            products: paylaod
+          }
         },
         { new: true, useFindAndModify: false },
         (err, doc) => {
@@ -197,18 +195,18 @@ const userSpecificCartController = {
             return res.status(400).json({
               data: null,
               status: 400,
-              message: err.message,
+              message: err.message
             });
 
           res.status(200).json({
             data: doc,
             status: 200,
-            message: "Success! product update by admin",
+            message: 'Success! product update by admin'
           });
         }
       )
         .populate(cartPopulate())
-        .select("-__v");
+        .select('-__v');
     } catch (err) {
       return next(err);
     }
@@ -220,14 +218,10 @@ const userSpecificCartController = {
    * @param {string?} userId - userId /  req.user?._id
    * @PublicApi
    */
-  removeProductRequestUserCart: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  removeProductRequestUserCart: async (req: Request, res: Response, next: NextFunction) => {
     const cartSchema = Joi.object({
       productId: Joi.string().required(),
-      userId: Joi.string(),
+      userId: Joi.string()
     });
     const { error } = cartSchema.validate(req.body);
     if (error) {
@@ -239,17 +233,15 @@ const userSpecificCartController = {
     try {
       if (!req.isSuperAdmin) {
         const cart = await Cart.findOne({
-          user: finalUserID,
+          user: finalUserID
         })
           .populate(cartPopulate())
-          .select("-__v");
+          .select('-__v');
         if (cart === null) {
           res.status(400).json({
             data: null,
             status: 400,
-            message: userId
-              ? "Failed: User ID is invalid"
-              : "Cart is not found!",
+            message: userId ? 'Failed: User ID is invalid' : 'Cart is not found!'
           });
         }
 
@@ -258,36 +250,34 @@ const userSpecificCartController = {
           user: cart?.user,
           createdAt: cart?.createdAt,
           updatedAt: cart?.updatedAt,
-          products: cart?.products?.filter(
-            (item) => item.product?._id?.toString() !== productId
-          ),
+          products: cart?.products?.filter(item => item.product?._id?.toString() !== productId)
         };
 
         return res.status(202).json({
           data: newCart,
           status: 202,
-          message: "Success, product removed",
+          message: 'Success, product removed'
         });
       }
       let newCart = await Cart.findOneAndUpdate(
         { user: finalUserID },
         {
-          $pull: { products: { product: productId } },
+          $pull: { products: { product: productId } }
         },
         { new: true, useFindAndModify: false }
       )
         .populate(cartPopulate())
-        .select("-__v");
+        .select('-__v');
 
       res.status(202).json({
         data: newCart,
         status: 202,
-        message: "Success! product removed by admin",
+        message: 'Success! product removed by admin'
       });
     } catch (err) {
       return next(err);
     }
-  },
+  }
 };
 
 /**
@@ -300,10 +290,8 @@ const cartController = {
    */
   list: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const carts = await Cart.find().populate(cartPopulate()).select("-__v");
-      res
-        .status(200)
-        .json({ status: 200, message: "Success, Cart list", data: carts });
+      const carts = await Cart.find().populate(cartPopulate()).select('-__v');
+      res.status(200).json({ status: 200, message: 'Success, Cart list', data: carts });
     } catch (err) {
       return next(err);
     }
@@ -320,9 +308,9 @@ const cartController = {
       products: Joi.array().items(
         Joi.object().keys({
           productId: Joi.string().required(),
-          quantity: Joi.number().required(),
+          quantity: Joi.number().required()
         })
-      ),
+      )
     });
     const { error } = cartSchema.validate(req.body);
     if (error) {
@@ -332,14 +320,14 @@ const cartController = {
     const { userId, products } = req.body;
 
     try {
-      console.log(req.user)
+      console.log(req.user);
       if (!req?.isSuperAdmin) {
         const instance = new Cart({
           user: userId,
           products: products.map((spec: any) => ({
             product: spec.productId,
-            quantity: spec.quantity,
-          })),
+            quantity: spec.quantity
+          }))
         });
         await instance.populate(cartPopulate()).execPopulate();
         const cart = {
@@ -347,12 +335,12 @@ const cartController = {
           user: instance.user,
           products: instance.products,
           createdAt: instance.createdAt,
-          updatedAt: instance.updatedAt,
+          updatedAt: instance.updatedAt
         };
         return res.status(201).json({
           data: cart,
           status: 201,
-          message: "Success! Cart created",
+          message: 'Success! Cart created'
         });
       }
 
@@ -360,15 +348,15 @@ const cartController = {
         user: userId,
         products: products.map((spec: any) => ({
           product: spec.productId,
-          quantity: spec.quantity,
-        })),
+          quantity: spec.quantity
+        }))
       });
 
       cart = await cart.populate(cartPopulate()).execPopulate();
       res.status(201).json({
         data: cart,
         status: 201,
-        message: "Success! cart created by admin",
+        message: 'Success! cart created by admin'
       });
     } catch (err: any) {
       return next(CustomErrorHandler.badRequest(err));
@@ -383,17 +371,15 @@ const cartController = {
   description: async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
     try {
-      const cart = await Cart.findOne({ _id: id })
-        .populate(cartPopulate())
-        .select("-__v");
+      const cart = await Cart.findOne({ _id: id }).populate(cartPopulate()).select('-__v');
 
       if (!cart) {
-        return next(CustomErrorHandler.badRequest("Cart is not found!"));
+        return next(CustomErrorHandler.badRequest('Cart is not found!'));
       }
       res.status(200).json({
         status: 200,
-        message: "Success, Cart description",
-        data: cart,
+        message: 'Success, Cart description',
+        data: cart
       });
     } catch (err) {
       return next(err);
@@ -411,9 +397,9 @@ const cartController = {
       products: Joi.array().items(
         Joi.object().keys({
           productId: Joi.string().required(),
-          quantity: Joi.number().required(),
+          quantity: Joi.number().required()
         })
-      ),
+      )
     });
     const { error } = cartSchema.validate(req.body);
     if (error) {
@@ -422,11 +408,9 @@ const cartController = {
 
     try {
       if (!req?.isSuperAdmin) {
-        let _cart = await Cart.findById(req.params.id).select("-__v");
+        let _cart = await Cart.findById(req.params.id).select('-__v');
         if (_cart === null) {
-          return res
-            .status(400)
-            .json({ status: 400, message: "Cart is not found!" });
+          return res.status(400).json({ status: 400, message: 'Cart is not found!' });
         }
 
         _cart.products = [];
@@ -437,40 +421,40 @@ const cartController = {
           user: _cart.user,
           products: _cart.products,
           createdAt: _cart.createdAt,
-          updatedAt: _cart.updatedAt,
+          updatedAt: _cart.updatedAt
         };
 
         return res.status(200).json({
           data: cart,
           status: 200,
-          message: "Success! Cart updated",
+          message: 'Success! Cart updated'
         });
       }
 
       const cart = await Cart.findOneAndUpdate(
         {
-          _id: req.params.id,
+          _id: req.params.id
         },
         {
           $set: {
             products: req.body.products.map((spec: any) => ({
               product: spec.productId,
-              quantity: spec.quantity,
-            })),
-          },
+              quantity: spec.quantity
+            }))
+          }
         },
         {
           new: true,
-          useFindAndModify: false,
+          useFindAndModify: false
           // upsert: true, // Insert new if not exist
         }
       )
         .populate(cartPopulate())
-        .select("-__v");
+        .select('-__v');
       res.status(200).json({
         data: cart,
         status: 200,
-        message: "Success! Cart updated by admin",
+        message: 'Success! Cart updated by admin'
       });
     } catch (err: any) {
       return next(CustomErrorHandler.serverError(err));
@@ -487,25 +471,25 @@ const cartController = {
       if (!req?.isSuperAdmin) {
         const instance = await Cart.findOne({ _id: req.params.id });
         if (!instance) {
-          return next(CustomErrorHandler.badRequest("Cart is not found!"));
+          return next(CustomErrorHandler.badRequest('Cart is not found!'));
         }
-        return res.json({ status: 202, message: "Success! Cart deleted" });
+        return res.json({ status: 202, message: 'Success! Cart deleted' });
       }
       const instance = await Cart.findOneAndDelete({ _id: req.params.id });
       if (!instance) {
-        return next(CustomErrorHandler.badRequest("Cart is not found!"));
+        return next(CustomErrorHandler.badRequest('Cart is not found!'));
       }
       return res.status(200).json({
         status: 200,
-        message: "Success! Cart deleted",
+        message: 'Success! Cart deleted'
       });
     } catch (err) {
       return next(CustomErrorHandler.serverError());
     }
-  },
+  }
 };
 
 export default {
   ...userSpecificCartController,
-  ...cartController,
+  ...cartController
 };
