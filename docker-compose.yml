@@ -7,7 +7,7 @@ services:
     environment:
       - APP_PORT=${APP_PORT}
       - APP_HOST=${APP_HOST}
-      - DB_URL=${APP_HOST}
+      - DB_URL=${DB_URL}
       - DEBUG_MODE=${DEBUG_MODE}
       - NODE_ENV=${NODE_ENV}
       - SECRET_KEY=${SECRET_KEY}
@@ -17,8 +17,6 @@ services:
     expose:
       - 8000
     command: [ "node", "dist/app.js" ]
-    depends_on:
-      - database
     networks:
       - store-network
 networks:
